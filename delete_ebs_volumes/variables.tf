@@ -10,4 +10,3 @@ variable "owner" {}
 variable "event_schedule_cron" {}
 variable "log_retention" {}
 variable "lambda_timeout" {}
-variable "allowed_account_ids" {}
