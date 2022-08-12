@@ -19,3 +19,4 @@ terraform.rc
 cms-test
 cms-prod
 falco_amazonlinux2*.*o
+lambda_function.py.zip
