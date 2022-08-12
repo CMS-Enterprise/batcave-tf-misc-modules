@@ -3,9 +3,7 @@ variable "permissions_boundary" {}
 variable "lambda_name" {}
 variable "aws_region" {}
 variable "environment" {}
-variable "account" {}
 variable "project" {}
-variable "owner" {}
 variable "event_schedule_cron" {}
 variable "log_retention" {}
 variable "lambda_timeout" {}
