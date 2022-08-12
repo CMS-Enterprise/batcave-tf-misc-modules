@@ -14,11 +14,8 @@ resource "aws_lambda_function" "delete_ebs_volumes" {
   handler          = "lambda_function.lambda_handler"
   timeout          = var.lambda_timeout
   tags = {
-    environment    = var.environment
-    directory_name = var.directory_name
-    account        = var.account
-    project        = var.project
-    owner          = var.owner
+    environment = var.environment
+    project     = var.project
   }
 }
 

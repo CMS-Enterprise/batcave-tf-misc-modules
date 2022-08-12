@@ -3,7 +3,6 @@ variable "permissions_boundary" {}
 variable "lambda_name" {}
 variable "aws_region" {}
 variable "environment" {}
-variable "directory_name" {}
 variable "account" {}
 variable "project" {}
 variable "owner" {}
