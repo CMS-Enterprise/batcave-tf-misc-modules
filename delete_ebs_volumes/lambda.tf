@@ -1,11 +1,27 @@
+resource "null_resource" "lambda_package" {
+  provisioner "local-exec" {
+    command = "docker run --rm -v \"$(pwd):/src\" -w /src python:3-alpine ./build.sh"
+    working_dir = "${path.module}/python"
+  }
+  triggers = {
+    # re-build when requirements change
+    deps = filemd5("${path.module}/python/requirements.txt")
+    # re-build when source code changes
+    source = jsonencode({for f in fileset("${path.module}/python/", "*.py") : f => filemd5("${path.module}/python/${f}")})
+    # re-build if the build output is missing locally or inconsistent with the latest deployed build
+    build_log = fileexists("${path.module}/python/build.log") ? filemd5("${path.module}/python/build.log") : timestamp()
+  }
+}
+
 data "archive_file" "lambda" {
   type        = "zip"
-  source_file = "${path.module}/python/lambda_function.py"
-  output_path = "${path.module}/python/lambda_function.py.zip"
+  source_dir  = "${path.module}/python/build"
+  output_path = "${path.module}/lambda.zip"
+
+  depends_on = [null_resource.lambda_package]
 }
 
 resource "aws_lambda_function" "delete_ebs_volumes" {
-
   function_name    = var.lambda_name
   role             = aws_iam_role.delete_ebs_volumes_lambda_role.arn
   filename         = data.archive_file.lambda.output_path
@@ -16,6 +32,10 @@ resource "aws_lambda_function" "delete_ebs_volumes" {
   tags = {
     environment = var.environment
     project     = var.project
+  }
+  vpc_config {
+    security_group_ids = [aws_security_group.lambda.id]
+    subnet_ids         = var.vpc_subnet_ids
   }
 }
 
@@ -69,6 +89,11 @@ resource "aws_iam_role" "delete_ebs_volumes_lambda_role" {
   )
 }
 
+resource "aws_iam_role_policy_attachment" "delete_ebs_volumes_vpc_access" {
+  role       = aws_iam_role.delete_ebs_volumes_lambda_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+
 resource "aws_iam_policy" "delete_ebs_volumes_lambda_policy" {
   name        = "delete_ebs_volumes_lambda_policy"
   path        = var.iam_path
@@ -86,6 +111,16 @@ resource "aws_iam_policy" "delete_ebs_volumes_lambda_policy" {
           ],
           "Effect" : "Allow",
           "Resource" : "*"
+        },
+        {
+          "Sid" : "EKSCluster",
+          "Action" : [
+            "eks:AccessKubernetesApi",
+            "eks:DescribeCluster",
+            "eks:ListClusters"
+          ],
+          "Effect": "Allow",
+          "Resource": "*"
         },
         {
           "Sid" : "CloudWatchLogs",
