@@ -85,7 +85,7 @@ data "aws_iam_policy_document" "sns_topic_policy" {
     effect = "Allow"
 
     principals {
-      type        = "Service"
+      type = "Service"
       identifiers = [
         "s3.amazonaws.com",
         "events.amazonaws.com",

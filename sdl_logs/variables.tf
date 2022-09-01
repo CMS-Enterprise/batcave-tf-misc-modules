@@ -23,24 +23,6 @@ variable "role_suffix" {
   description = "A unique identifier that will be used as the IAM role suffix"
 }
 
-variable "accounts_list" {
-  description = "AWS Accounts to onboard"
-  type        = list(string)
-  default     = []
-}
-
-variable "kms_key_arn" {
-  type        = string
-  description = "The ARN of the KMS key if your data is encrypted using KMS-SSE. Not required if using SSE-S3."
-  default     = ""
-}
-
-variable "managed_bucket_notifications_enabled" {
-  type        = bool
-  description = "Allow Panther to configure bucket SNS notifications"
-  default     = true
-}
-
 variable "role_path" {
   type        = string
   description = "Path for IAM Roles and managed policies required."
