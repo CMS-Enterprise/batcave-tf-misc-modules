@@ -86,24 +86,3 @@ resource "aws_iam_role_policy" "kms_decryption" {
   })
 }
 
-# Provides an IAM role inline policy for reading and adding notification configuration of a bucket
-resource "aws_iam_role_policy" "managed_bucket_notifications_policy" {
-  count = var.managed_bucket_notifications_enabled ? 1 : 0
-  name  = "GetPutBucketNotifications"
-  role  = aws_iam_role.log_processing_role.id
-  policy = jsonencode({
-    Version : "2012-10-17",
-    Statement : [
-      {
-        Effect : "Allow",
-        Action : [
-          "s3:GetBucketNotification",
-          "s3:PutBucketNotification",
-        ],
-        Resource : [
-          data.aws_s3_bucket.cms_logging_bucket.arn,
-        ]
-      }
-    ]
-  })
-}
