@@ -89,11 +89,6 @@ resource "aws_iam_role" "delete_ebs_volumes_lambda_role" {
   )
 }
 
-resource "aws_iam_role_policy_attachment" "delete_ebs_volumes_vpc_access" {
-  role       = aws_iam_role.delete_ebs_volumes_lambda_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
-}
-
 resource "aws_iam_policy" "delete_ebs_volumes_lambda_policy" {
   name        = "delete_ebs_volumes_lambda_policy"
   path        = var.iam_path
@@ -119,17 +114,23 @@ resource "aws_iam_policy" "delete_ebs_volumes_lambda_policy" {
             "eks:DescribeCluster",
             "eks:ListClusters"
           ],
-          "Effect": "Allow",
-          "Resource": "*"
+          "Effect" : "Allow",
+          "Resource" : "*"
         },
         {
-          "Sid" : "CloudWatchLogs",
+          "Sid" : "VPCAndCloudWatch",
           "Action" : [
+            "logs:CreateLogGroup",
             "logs:CreateLogStream",
-            "logs:PutLogEvents"
+            "logs:PutLogEvents",
+            "ec2:CreateNetworkInterface",
+            "ec2:DescribeNetworkInterfaces",
+            "ec2:DeleteNetworkInterface",
+            "ec2:AssignPrivateIpAddresses",
+            "ec2:UnassignPrivateIpAddresses"
           ],
           "Effect" : "Allow",
-          "Resource" : "arn:aws:logs:*:*:*"
+          "Resource" : "*"
         }
       ]
     }
