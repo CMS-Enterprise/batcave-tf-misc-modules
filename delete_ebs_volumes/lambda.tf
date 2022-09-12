@@ -1,11 +1,27 @@
+resource "null_resource" "lambda_package" {
+  provisioner "local-exec" {
+    command     = "docker run --rm -v \"$(pwd):/src\" -w /src python:3-alpine ./build.sh"
+    working_dir = "${path.module}/python"
+  }
+  triggers = {
+    # re-build when requirements change
+    deps      = filemd5("${path.module}/python/requirements.txt")
+    # re-build when source code changes
+    source    = jsonencode({for f in fileset("${path.module}/python/", "*.py") : f => filemd5("${path.module}/python/${f}")})
+    # re-build if the build output is missing locally or inconsistent with the latest deployed build
+    build_log = fileexists("${path.module}/python/build.log") ? filemd5("${path.module}/python/build.log") : timestamp()
+  }
+}
+
 data "archive_file" "lambda" {
   type        = "zip"
-  source_file = "${path.module}/python/lambda_function.py"
-  output_path = "${path.module}/python/lambda_function.py.zip"
+  source_dir  = "${path.module}/python/build"
+  output_path = "${path.module}/lambda.zip"
+
+  depends_on = [null_resource.lambda_package]
 }
 
 resource "aws_lambda_function" "delete_ebs_volumes" {
-
   function_name    = var.lambda_name
   role             = aws_iam_role.delete_ebs_volumes_lambda_role.arn
   filename         = data.archive_file.lambda.output_path
@@ -13,9 +29,13 @@ resource "aws_lambda_function" "delete_ebs_volumes" {
   source_code_hash = data.archive_file.lambda.output_base64sha256
   handler          = "lambda_function.lambda_handler"
   timeout          = var.lambda_timeout
-  tags = {
+  tags             = {
     environment = var.environment
     project     = var.project
+  }
+  vpc_config {
+    security_group_ids = [aws_security_group.lambda.id]
+    subnet_ids         = data.aws_subnets.private.ids
   }
 }
 
@@ -52,7 +72,7 @@ resource "aws_iam_role" "delete_ebs_volumes_lambda_role" {
   path                 = var.iam_path
   permissions_boundary = var.permissions_boundary
   managed_policy_arns  = [aws_iam_policy.delete_ebs_volumes_lambda_policy.arn]
-  assume_role_policy = jsonencode(
+  assume_role_policy   = jsonencode(
     {
       "Version" : "2012-10-17",
       "Statement" : [
@@ -73,7 +93,7 @@ resource "aws_iam_policy" "delete_ebs_volumes_lambda_policy" {
   name        = "delete_ebs_volumes_lambda_policy"
   path        = var.iam_path
   description = "Policy to be used by lambda which deletes available EBS volumes"
-  policy = jsonencode(
+  policy      = jsonencode(
     {
       "Version" : "2012-10-17",
       "Statement" : [
@@ -88,13 +108,29 @@ resource "aws_iam_policy" "delete_ebs_volumes_lambda_policy" {
           "Resource" : "*"
         },
         {
-          "Sid" : "CloudWatchLogs",
+          "Sid" : "EKSCluster",
           "Action" : [
-            "logs:CreateLogStream",
-            "logs:PutLogEvents"
+            "eks:AccessKubernetesApi",
+            "eks:DescribeCluster",
+            "eks:ListClusters"
           ],
           "Effect" : "Allow",
-          "Resource" : "arn:aws:logs:*:*:*"
+          "Resource" : "*"
+        },
+        {
+          "Sid" : "VPCAndCloudWatch",
+          "Action" : [
+            "logs:CreateLogGroup",
+            "logs:CreateLogStream",
+            "logs:PutLogEvents",
+            "ec2:CreateNetworkInterface",
+            "ec2:DescribeNetworkInterfaces",
+            "ec2:DeleteNetworkInterface",
+            "ec2:AssignPrivateIpAddresses",
+            "ec2:UnassignPrivateIpAddresses"
+          ],
+          "Effect" : "Allow",
+          "Resource" : "*"
         }
       ]
     }
