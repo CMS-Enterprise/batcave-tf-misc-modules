@@ -1,7 +1,7 @@
 resource "aws_security_group" "lambda" {
   name        = "${var.lambda_name}-lambda"
   description = "Security group for ${var.lambda_name}"
-  vpc_id      = var.vpc_id
+  vpc_id      = data.aws_vpc.batcave_vpc.id
 }
 
 resource "aws_security_group_rule" "egress" {
