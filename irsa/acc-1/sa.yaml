@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: "dev-s3-read"
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::373346310182:role/delegatedadmin/developer/dev_s3_read"
+automountServiceAccountToken: true

@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: test-account
+  name: test-account
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-deployment
+  template:
+    metadata:
+      labels:
+        app: test-deployment
+    spec:
+      serviceAccountName: "test-s3-sa"
+      automountServiceAccountToken: true
+      containers:
+      - image: amazon/aws-cli
+        name: test-access
+        command: ["sleep","10000"]
