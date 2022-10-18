@@ -29,6 +29,11 @@ resource "aws_lambda_function" "delete_ebs_volumes" {
   source_code_hash = data.archive_file.lambda.output_base64sha256
   handler          = "lambda_function.lambda_handler"
   timeout          = var.lambda_timeout
+  environment {
+    variables = {
+      LOG_LEVEL = "INFO"
+    }
+  }
   tags             = {
     environment = var.environment
     project     = var.project

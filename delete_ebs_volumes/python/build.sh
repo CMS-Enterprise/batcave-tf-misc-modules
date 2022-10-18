@@ -1,10 +1,16 @@
 #!/bin/sh
 
 set -e
-pip install -r requirements.txt --upgrade -t ./build
-cp *.py ./build/
 
-echo "# dependencies" > build.log
-pip freeze --path ./build -r requirements.txt >> build.log
-echo "# source" >> build.log
-ls *.py | xargs md5sum >> build.log
+PIP_EXE="$(which pip3 || which pip)"
+MD5_EXE="$(which md5sum || which md5)"
+
+"$PIP_EXE" install -r requirements.txt --upgrade -t ./build
+cp ./*.py ./build/
+
+{
+  echo "# dependencies" ;
+  "$PIP_EXE" freeze --path ./build -r requirements.txt ;
+  echo "# source" ;
+  find . -name '*.py' -maxdepth 1 -exec "$MD5_EXE" {} \;
+} > build.log
