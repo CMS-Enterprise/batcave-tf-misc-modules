@@ -1,7 +1,11 @@
 import getopt
+import logging
+import os
 import sys
 
 from ebs_volume_tasks import cleanup
+
+logging.basicConfig(level=os.environ["LOG_LEVEL"] if "LOG_LEVEL" in os.environ else logging.WARN)
 
 
 def print_usage():
