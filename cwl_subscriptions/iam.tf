@@ -66,8 +66,12 @@ resource "aws_iam_role" "cloudwatch_firehose_role" {
       "Version" : "2012-10-17"
       "Statement" : [
         {
-          "Action" : "firehose:*"
-          "Effect" : "Allow"
+          "Action" : [
+            "firehose:DescribeDeliveryStream",
+            "firehose:PutRecord",
+            "firehose:PutRecordBatch"
+          ],
+          "Effect" : "Allow",
           "Resource" : aws_kinesis_firehose_delivery_stream.panther_firehose.arn
         }
       ]
