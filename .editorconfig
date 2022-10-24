@@ -5,13 +5,10 @@ root = true
 
 # Unix-style newlines with a newline ending every file
 [*]
-charset = utf-8
 end_of_line = lf
 insert_final_newline = true
-trim_trailing_whitespace = true
+
+[{*.yml,*.yaml,*.hcl,*.cue}]
 indent_style = space
 indent_size = 2
-
-# 4 space indentation for python
-[*.py]
-indent_size = 4
+trim_trailing_whitespace = true
