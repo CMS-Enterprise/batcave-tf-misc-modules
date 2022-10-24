@@ -2,7 +2,6 @@
 variable "cluster_name" {
   type        = string
   description = "Cluster Name."
-  default     = "test"
 }
 
 variable "buffer_size" {
@@ -19,4 +18,10 @@ variable "buffer_interval_in_seconds" {
 
 variable "iam_role_path" {
   default = "/delegatedadmin/developer/"
+}
+
+variable "permissions_boundary" {
+  type = string
+  default = ""
+  description = "IAM Role Permissions Boundary, if required."
 }

@@ -2,7 +2,7 @@
 resource "aws_iam_role" "firehose_s3_role" {
   name                 = "${var.cluster_name}-FirehoseS3Role"
   path                 = var.iam_role_path
-  permissions_boundary = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/cms-cloud-admin/developer-boundary-policy"
+  permissions_boundary = var.permissions_boundary
 
   assume_role_policy = jsonencode({
     "Version" : "2012-10-17",
@@ -45,7 +45,7 @@ resource "aws_iam_role" "firehose_s3_role" {
 resource "aws_iam_role" "cloudwatch_firehose_role" {
   name                 = "${var.cluster_name}-CloudwatchFirehoseRole"
   path                 = var.iam_role_path
-  permissions_boundary = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/cms-cloud-admin/developer-boundary-policy"
+  permissions_boundary = var.permissions_boundary
 
   assume_role_policy = jsonencode({
     "Version" : "2012-10-17",
@@ -86,7 +86,7 @@ resource "aws_iam_role" "cloudwatch_firehose_role" {
 resource "aws_iam_role" "event_loggroup" {
   name                 = "new-loggroup-events-role"
   path                 = var.iam_role_path
-  permissions_boundary = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/cms-cloud-admin/developer-boundary-policy"
+  permissions_boundary = var.permissions_boundary
 
   inline_policy {
     name   = "log-group-events"
@@ -120,7 +120,7 @@ data "aws_iam_policy_document" "events_policy" {
 resource "aws_iam_role" "sfn_new_loggroup" {
   name                 = "new-loggroup-sfn"
   path                 = var.iam_role_path
-  permissions_boundary = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/cms-cloud-admin/developer-boundary-policy"
+  permissions_boundary = var.permissions_boundary
 
   inline_policy {
     name   = "new-loggroup-sfn"
