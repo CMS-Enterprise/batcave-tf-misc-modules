@@ -17,11 +17,12 @@ variable "buffer_interval_in_seconds" {
 }
 
 variable "iam_role_path" {
+  type    = string
   default = "/delegatedadmin/developer/"
 }
 
 variable "permissions_boundary" {
-  type = string
-  default = ""
+  type        = string
+  default     = null
   description = "IAM Role Permissions Boundary, if required."
 }
