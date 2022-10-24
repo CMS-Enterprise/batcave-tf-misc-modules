@@ -35,8 +35,8 @@ resource "aws_cloudwatch_event_rule" "rule" {
 resource "aws_cloudwatch_event_target" "target" {
   rule      = aws_cloudwatch_event_rule.rule.name
   target_id = aws_cloudwatch_event_rule.rule.name
-  arn       = aws_sfn_state_machine.new_loggroup.arn
-  role_arn  = aws_iam_role.event_loggroup.arn
+  arn       = aws_sfn_state_machine.subscribe_log_group.arn
+  role_arn  = aws_iam_role.event_new_log_group.arn
 }
 
 
@@ -45,9 +45,9 @@ resource "aws_cloudwatch_event_target" "target" {
 ###### Step Function ######
 ###########################
 
-resource "aws_sfn_state_machine" "new_loggroup" {
+resource "aws_sfn_state_machine" "subscribe_log_group" {
   name       = "subscribe-to-firehose"
-  role_arn   = aws_iam_role.sfn_new_loggroup.arn
+  role_arn   = aws_iam_role.sfn_subscribe_log_group.arn
   definition = jsonencode({
     "Comment": "Subscribes log groups to a Firehose",
     "StartAt": "Subscribe",

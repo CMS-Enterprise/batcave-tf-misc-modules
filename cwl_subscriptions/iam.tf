@@ -83,8 +83,8 @@ resource "aws_iam_role" "cloudwatch_firehose_role" {
 ##### Eventbridge IAM #####
 ###########################
 
-resource "aws_iam_role" "event_loggroup" {
-  name                 = "new-loggroup-events-role"
+resource "aws_iam_role" "event_new_log_group" {
+  name                 = "new-log-group-events-role"
   path                 = var.iam_role_path
   permissions_boundary = var.permissions_boundary
 
@@ -112,12 +112,12 @@ data "aws_iam_policy_document" "events_policy" {
   statement {
     effect    = "Allow"
     actions   = ["states:StartExecution"]
-    resources = [aws_sfn_state_machine.new_loggroup.arn]
+    resources = [aws_sfn_state_machine.subscribe_log_group.arn]
   }
 }
 
 # Step Function Role
-resource "aws_iam_role" "sfn_new_loggroup" {
+resource "aws_iam_role" "sfn_subscribe_log_group" {
   name                 = "new-loggroup-sfn"
   path                 = var.iam_role_path
   permissions_boundary = var.permissions_boundary
