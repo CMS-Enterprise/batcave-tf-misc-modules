@@ -48,24 +48,22 @@ resource "aws_cloudwatch_event_target" "target" {
 resource "aws_sfn_state_machine" "new_loggroup" {
   name       = "subscribe-to-firehose"
   role_arn   = aws_iam_role.sfn_new_loggroup.arn
-  definition = <<EOF
-{
-  "Comment": "Subscribes log groups to a Firehose",
-  "StartAt": "Subscribe",
-  "States": {
-    "Subscribe": {
-      "Type": "Task",
-      "Resource": "arn:aws:states:::aws-sdk:cloudwatchlogs:putSubscriptionFilter",
-      "Parameters": {
-        "DestinationArn": "${aws_kinesis_firehose_delivery_stream.panther_firehose.arn}",
-        "FilterName": "panther-firehose-filter",
-        "FilterPattern": "",
-        "RoleArn": "${aws_iam_role.cloudwatch_firehose_role.arn}",
-        "LogGroupName.$": "$.detail.requestParameters.logGroupName"
-      },
-      "End": true
+  definition = jsonencode({
+    "Comment": "Subscribes log groups to a Firehose",
+    "StartAt": "Subscribe",
+    "States": {
+      "Subscribe": {
+        "Type": "Task",
+        "Resource": "arn:aws:states:::aws-sdk:cloudwatchlogs:putSubscriptionFilter",
+        "Parameters": {
+          "DestinationArn": "${aws_kinesis_firehose_delivery_stream.panther_firehose.arn}",
+          "FilterName": "panther-firehose-filter",
+          "FilterPattern": "",
+          "RoleArn": "${aws_iam_role.cloudwatch_firehose_role.arn}",
+          "LogGroupName.$": "$.detail.requestParameters.logGroupName"
+        },
+        "End": true
+      }
     }
-  }
-}
-EOF
+  })
 }
