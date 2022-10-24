@@ -118,12 +118,12 @@ data "aws_iam_policy_document" "events_policy" {
 
 # Step Function Role
 resource "aws_iam_role" "sfn_subscribe_log_group" {
-  name                 = "new-loggroup-sfn"
+  name                 = "subscribe-new-log-group"
   path                 = var.iam_role_path
   permissions_boundary = var.permissions_boundary
 
   inline_policy {
-    name   = "new-loggroup-sfn"
+    name   = "subscribe-new-log-group"
     policy = data.aws_iam_policy_document.sfn_policy.json
 
   }
