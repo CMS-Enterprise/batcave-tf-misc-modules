@@ -2,36 +2,34 @@
 resource "aws_cloudwatch_event_rule" "rule" {
   name          = "CloudWatchLog-Group-Auto-Subscribe"
   description   = "Subscribes new eks and ec2 log groups to a kinesis stream"
-  event_pattern = <<EOF
-{
-  "source": [
-    "aws.logs"
-  ],
-  "detail-type": [
-    "AWS API Call via CloudTrail"
-  ],
-  "detail": {
-    "eventSource": [
-      "logs.amazonaws.com"
-    ],
-    "eventName": [
-      "CreateLogGroup"
-    ],
-    "requestParameters": {
-      "logGroupName": [
-        { 
-          "prefix": "/aws/eks/"
-        }
+  event_pattern = jsonencode({
+    detail = {
+      errorCode = [
+        {
+          exists = false
+        },
       ]
-    },
-    "errorCode": [
-      { 
-        "exists": false
+      eventName = [
+        "CreateLogGroup",
+      ]
+      eventSource = [
+        "logs.amazonaws.com",
+      ]
+      requestParameters = {
+        logGroupName = [
+          {
+            prefix = "/aws/eks/"
+          },
+        ]
       }
+    }
+    detail-type = [
+      "AWS API Call via CloudTrail",
     ]
-  }
-}
-EOF
+    source = [
+      "aws.logs",
+    ]
+  })
 }
 
 resource "aws_cloudwatch_event_target" "target" {
