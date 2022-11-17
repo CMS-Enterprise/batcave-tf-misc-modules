@@ -1,15 +1,15 @@
 # S3 buckets for landing zone
-resource "aws_s3_bucket" "cloutrail" {
+resource "aws_s3_bucket" "cloudtrail" {
   bucket        = "${var.project}-${var.environment}-${data.aws_region.current.name}-data-events"
   force_destroy = var.force_destroy
 }
 
-resource "aws_s3_bucket_acl" "landing_zone_buckets" {
+resource "aws_s3_bucket_acl" "cloudtrail" {
   bucket = aws_s3_bucket.cloudtrail.id
   acl    = "private"
 }
 
-resource "aws_s3_bucket_public_access_block" "landing_zone_buckets" {
+resource "aws_s3_bucket_public_access_block" "cloudtrail" {
   bucket = aws_s3_bucket.cloudtrail.id
 
   block_public_acls       = true
