@@ -3,7 +3,7 @@ resource "aws_cloudtrail" "main" {
   name = "${var.project}-${var.environment}-data-events"
 
   s3_bucket_name                = aws_s3_bucket.cloudtrail.bucket
-  is_multi_region_trail         = true
+  is_multi_region_trail         = false
   enable_log_file_validation    = true
   kms_key_id                    = data.aws_kms_alias.cloudtrail_kms_key.target_key_arn
   include_global_service_events = false
