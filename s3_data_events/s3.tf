@@ -1,7 +1,7 @@
 # S3 buckets for landing zone
 resource "aws_s3_bucket" "cloudtrail" {
   bucket        = "${var.project}-${var.environment}-${data.aws_region.current.name}-data-events"
-  force_destroy = var.force_destroy
+  force_destroy = false
 }
 
 resource "aws_s3_bucket_acl" "cloudtrail" {
