@@ -21,8 +21,8 @@ resource "aws_cloudtrail" "main" {
       field = "resources.ARN"
 
       not_equals = [
-        "${data.aws_s3_bucket.cms_logging_bucket_east.arn}/",
-        "${data.aws_s3_bucket.cms_logging_bucket_west.arn}/",
+        "arn:aws:s3:::cms-cloud-${data.aws_caller_identity.current.account_id}-us-east-1/",
+        "arn:aws:s3:::cms-cloud-${data.aws_caller_identity.current.account_id}-us-west-2/",
         "${aws_s3_bucket.cloudtrail.arn}/",
       ]
     }
