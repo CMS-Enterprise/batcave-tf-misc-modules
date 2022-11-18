@@ -42,21 +42,6 @@ resource "aws_s3_bucket_policy" "bucket" {
         }
       },
       {
-        Sid       = "MinimumTlsVersion"
-        Effect    = "Deny"
-        Principal = "*"
-        Action    = "s3:*"
-        Resource = [
-          "${aws_s3_bucket.cloudtrail.arn}/*",
-          aws_s3_bucket.cloudtrail.arn,
-        ]
-        Condition = {
-          NumericLessThan = {
-            "s3:TlsVersion" = "1.2"
-          }
-        }
-      },
-      {
         Sid    = "cloudtrail"
         Effect = "Allow"
         Principal = {
