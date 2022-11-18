@@ -1,6 +1,6 @@
 
 resource "aws_cloudtrail" "main" {
-  name = "${var.project}-${var.environment}-data-events"
+  name = "${var.project}-${var.environment}-${data.aws_region.current.name}-data-events"
 
   s3_bucket_name                = aws_s3_bucket.cloudtrail.bucket
   is_multi_region_trail         = false
