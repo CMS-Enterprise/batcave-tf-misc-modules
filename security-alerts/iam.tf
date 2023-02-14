@@ -72,3 +72,66 @@ resource "aws_iam_policy" "chatbot_policy" {
 
   policy = data.aws_iam_policy_document.chatbot_policy.json
 }
+
+### Step Function Role
+
+resource "aws_iam_role" "sfn_sechub_role" {
+  name                 = "sfn_sechub_role"
+  path                 = var.iam_role_path
+  permissions_boundary = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/cms-cloud-admin/developer-boundary-policy"
+  assume_role_policy = jsonencode({
+    Version : "2012-10-17",
+    Statement : [
+      {
+        Effect : "Allow",
+        Principal : {
+          Service : [
+            "states.amazonaws.com"
+          ]
+        },
+        Action : "sts:AssumeRole",
+        Condition : {
+          ArnLike : {
+            "aws:SourceArn" : aws_sfn_state_machine.sechub_state_machine.arn
+          },
+          StringEquals : {
+            "aws:SourceAccount" : "${data.aws_caller_identity.current.account_id}"
+          }
+        }
+      }
+    ]
+    }
+  )
+
+}
+
+data "aws_iam_policy_document" "sfn_sechub_policy" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+    resources = ["*"]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "sns:Publish"
+    ]
+    resources = [
+      aws_sns_topic.slack_topic.arn
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey*"
+    ]
+    resource = [
+      aws_kms_key.aws_kms_key.arn
+    ]
+  }
+}
