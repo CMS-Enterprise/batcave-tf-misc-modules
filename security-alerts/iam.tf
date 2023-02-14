@@ -92,7 +92,7 @@ resource "aws_iam_role" "sfn_sechub_role" {
         Action : "sts:AssumeRole",
         Condition : {
           ArnLike : {
-            "aws:SourceArn" : aws_sfn_state_machine.sechub_state_machine.arn
+            "aws:SourceArn" : "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.step_function_name}"
           },
           StringEquals : {
             "aws:SourceAccount" : "${data.aws_caller_identity.current.account_id}"
@@ -130,8 +130,8 @@ data "aws_iam_policy_document" "sfn_sechub_policy" {
       "kms:Decrypt",
       "kms:GenerateDataKey*"
     ]
-    resource = [
-      aws_kms_key.aws_kms_key.arn
+    resources = [
+      aws_kms_key.kms_key.arn
     ]
   }
 }
