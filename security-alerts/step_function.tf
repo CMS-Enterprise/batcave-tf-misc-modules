@@ -3,7 +3,7 @@ resource "aws_sfn_state_machine" "sechub_state_machine" {
   role_arn = aws_iam_role.sfn_sechub_role.arn
   definition = jsonencode({
     Comment : "A description of my state machine",
-    StartAt : "check if new or repeated finding from Nessus",
+    StartAt : "New Finding Check",
     States : {
       "New Finding Check" : {
         Type : "Choice",
