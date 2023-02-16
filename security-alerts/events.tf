@@ -30,6 +30,7 @@ resource "aws_cloudwatch_event_target" "target" {
   rule      = aws_cloudwatch_event_rule.rule.name
   target_id = aws_cloudwatch_event_rule.rule.name
   arn       = aws_sfn_state_machine.sechub_state_machine.arn
+  role_arn      = aws_iam_role.sfn_target_role.arn
 }
 
 # Security hub nessus only
@@ -63,6 +64,7 @@ resource "aws_cloudwatch_event_target" "nessus" {
   rule      = aws_cloudwatch_event_rule.nessus.name
   target_id = aws_cloudwatch_event_rule.nessus.name
   arn       = aws_sfn_state_machine.sechub_state_machine.arn
+  role_arn      = aws_iam_role.sfn_target_role.arn
 }
 
 # GuardDuty
