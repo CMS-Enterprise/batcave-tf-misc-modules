@@ -136,6 +136,19 @@ data "aws_iam_policy_document" "sfn_sechub_policy" {
   }
 }
 
+resource "aws_iam_role_policy_attachment" "sfn_sechub_attach" {
+  role       = aws_iam_role.sfn_sechub_role.name
+  policy_arn = aws_iam_policy.sfn_sechub_policy.arn
+}
+
+resource "aws_iam_policy" "sfn_sechub_policy" {
+  name        = "sfn_sechub_policy"
+  path        = var.iam_role_path
+  description = "Allows the SecHub step funcion to publish to our sns topic"
+
+  policy = data.aws_iam_policy_document.sfn_sechub_policy.json
+}
+
 # eventbridge sfn target role
 
 resource "aws_iam_role" "sfn_target_role" {
@@ -176,4 +189,17 @@ data "aws_iam_policy_document" "sfn_target_policy" {
     ]
     resources = ["arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.step_function_name}"]
   }
+}
+
+resource "aws_iam_role_policy_attachment" "sfn_target_attach" {
+  role       = aws_iam_role.sfn_target_role.name
+  policy_arn = aws_iam_policy.sfn_target_policy.arn
+}
+
+resource "aws_iam_policy" "sfn_target_policy" {
+  name        = "sfn_target_policy"
+  path        = var.iam_role_path
+  description = "Allows Eventbridge Rules to invoke the SecHub findings state machine"
+
+  policy = data.aws_iam_policy_document.sfn_target_policy.json
 }
