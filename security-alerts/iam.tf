@@ -92,7 +92,7 @@ resource "aws_iam_role" "sfn_sechub_role" {
         Action : "sts:AssumeRole",
         Condition : {
           ArnLike : {
-            "aws:SourceArn" : "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.step_function_name}"
+            "aws:SourceArn" : "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:*"
           },
           StringEquals : {
             "aws:SourceAccount" : "${data.aws_caller_identity.current.account_id}"
