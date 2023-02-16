@@ -135,3 +135,45 @@ data "aws_iam_policy_document" "sfn_sechub_policy" {
     ]
   }
 }
+
+# eventbridge sfn target role
+
+resource "aws_iam_role" "sfn_target_role" {
+  name                 = "sfn_target_role"
+  path                 = var.iam_role_path
+  permissions_boundary = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/cms-cloud-admin/developer-boundary-policy"
+  assume_role_policy = jsonencode({
+    Version : "2012-10-17",
+    Statement : [
+      {
+        Effect : "Allow",
+        Principal : {
+          Service : [
+            "events.amazonaws.com"
+          ]
+        },
+        Action : "sts:AssumeRole",
+        Condition : {
+          ArnLike : {
+            "aws:SourceArn" : ["arn:aws:events:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:rule:${var.sechub_rule_name}",
+              "arn:aws:events:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:rule:${var.sechub_nessus_rule_name}"
+            ]
+          },
+          StringEquals : {
+            "aws:SourceAccount" : "${data.aws_caller_identity.current.account_id}"
+          }
+        }
+      }
+    ]
+  })
+}
+
+data "aws_iam_policy_document" "sfn_target_policy" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "states:StartExecution",
+    ]
+    resources = ["arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.step_function_name}"]
+  }
+}

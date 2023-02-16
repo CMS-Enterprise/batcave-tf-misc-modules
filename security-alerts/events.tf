@@ -1,8 +1,8 @@
 # Security hub generic
 resource "aws_cloudwatch_event_rule" "rule" {
-  name        = "sechub-findings-to-lambda"
-  description = "Sends Security Hub findings to a Slack Lambda"
-
+  name          = "sechub-findings-to-lambda"
+  description   = "Sends Security Hub findings to a Slack Lambda"
+  role_arn      = aws_iam_role.sfn_target_role.arn
   event_pattern = <<EOF
 {
   "source": [
@@ -34,9 +34,9 @@ resource "aws_cloudwatch_event_target" "target" {
 
 # Security hub nessus only
 resource "aws_cloudwatch_event_rule" "nessus" {
-  name        = "sechub-findings-to-lambda-nessus"
-  description = "Sends Security Hub nessus findings to a Slack Lambda"
-
+  name          = "sechub-findings-to-lambda-nessus"
+  description   = "Sends Security Hub nessus findings to a Slack Lambda"
+  role_arn      = aws_iam_role.sfn_target_role.arn
   event_pattern = <<EOF
 {
   "source": [
