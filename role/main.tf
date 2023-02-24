@@ -1,11 +1,13 @@
 data "aws_caller_identity" "current" {}
 
 # ROLES
-resource "aws_iam_role" "api-service-role" { #resource "aws_iam_role" "signal-api-service-role" {
-  name = "${var.GroupName}-api-service-role" #name = "signal-api-service-role"
+resource "aws_iam_role" "api-service-role" {
+  name = "${var.GroupName}-api-service-role"
   depends_on = [
       aws_iam_policy.api-policy
     ]
+  path = var.iam_role_path
+  permissions_boundary = var.permissions_boundary
   assume_role_policy = <<-EOF
   { 
     "Version": "2012-10-17",
@@ -27,11 +29,13 @@ resource "aws_iam_role" "api-service-role" { #resource "aws_iam_role" "signal-ap
       EOF
 }
 
-resource "aws_iam_role" "job-scheduler-service-role" { #resource "aws_iam_role" "signal-job-scheduler-service-role" {
-  name = "${var.GroupName}-job-scheduler-service-role" #name = "signal-job-scheduler-service-role"
+resource "aws_iam_role" "job-scheduler-service-role" {
+  name = "${var.GroupName}-job-scheduler-service-role"
   depends_on = [
       aws_iam_policy.job-scheduler-policy
     ]
+  path = var.iam_role_path
+  permissions_boundary = var.permissions_boundary
   assume_role_policy = <<-EOF
   { 
     "Version": "2012-10-17",
@@ -53,11 +57,13 @@ resource "aws_iam_role" "job-scheduler-service-role" { #resource "aws_iam_role" 
     EOF
 }
 
-resource "aws_iam_role" "cms-cloud-s3-snowflake-role" { #resource "aws_iam_role" "cms-cloud-signal-s3-snowflake-role" {
-  name = "cms-cloud-${var.GroupName}-s3-snowflake-role" #name = "cms-cloud-signal-s3-snowflake-role"
+resource "aws_iam_role" "cms-cloud-s3-snowflake-role" {
+  name = "cms-cloud-${var.GroupName}-s3-snowflake-role"
   depends_on = [
       aws_iam_policy.snowflake-access-policy
     ]
+  path = var.iam_role_path
+  permissions_boundary = var.permissions_boundary
   assume_role_policy = <<-EOF
   {
     "Version": "2012-10-17",
@@ -82,8 +88,8 @@ resource "aws_iam_role" "cms-cloud-s3-snowflake-role" { #resource "aws_iam_role"
   EOF
 }
 
-resource "aws_iam_policy" "api-policy" { #resource "aws_iam_policy" "signal-api-policy" {
-  name        = "${var.GroupName}-api-policy" #name        = "signal-api-policy"
+resource "aws_iam_policy" "api-policy" {
+  name        = "${var.GroupName}-api-policy"
   path        = "/delegatedadmin/developer/"
 
   policy = <<-EOF
@@ -114,8 +120,8 @@ locals {
   ApiResources = "[\"${join("\",\"",var.ApiResources)}\"]"
 }
 
-resource "aws_iam_policy" "job-scheduler-policy" { #resource "aws_iam_policy" "signal-job-scheduler-policy" {
-  name        = "${var.GroupName}-job-scheduler-policy" #name        = "signal-job-scheduler-policy"
+resource "aws_iam_policy" "job-scheduler-policy" {
+  name        = "${var.GroupName}-job-scheduler-policy"
   path        = "/delegatedadmin/developer/"
 
   policy = <<-EOF
@@ -137,8 +143,8 @@ resource "aws_iam_policy" "job-scheduler-policy" { #resource "aws_iam_policy" "s
   EOF
 }
 
-resource "aws_iam_policy" "snowflake-access-policy" { #resource "aws_iam_policy" "signal-snowflake-access-policy" {
-  name        = "${var.GroupName}-job-scheduler-policy" #name        = "signal-job-scheduler-policy"
+resource "aws_iam_policy" "snowflake-access-policy" {
+  name        = "${var.GroupName}-snowflake-access-policy"
   path        = "/delegatedadmin/developer/"
 
   policy = <<-EOF
@@ -162,4 +168,19 @@ resource "aws_iam_policy" "snowflake-access-policy" { #resource "aws_iam_policy"
     ]
   }
   EOF
+}
+
+resource "aws_iam_role_policy_attachment" "snowflake_policy" {
+  role       = aws_iam_role.cms-cloud-s3-snowflake-role.name
+  policy_arn = aws_iam_policy.snowflake-access-policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "api_policy" {
+  role       = aws_iam_role.api-service-role.name
+  policy_arn = aws_iam_policy.api-policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "job_scheduler_policy" {
+  role       = aws_iam_role.job-scheduler-service-role.name
+  policy_arn = aws_iam_policy.job-scheduler-policy.arn
 }
