@@ -3,8 +3,50 @@ resource "aws_sfn_state_machine" "sechub_state_machine" {
   role_arn = aws_iam_role.sfn_sechub_role.arn
   definition = jsonencode({
     Comment : "This state machine attempts to reduce duplicate alerts that have the same FirstObservedAt date for a given finding.",
-    StartAt : "New Finding Check",
+    StartAt : "Prevent NULL detail info",
     States : {
+      "Prevent NULL detail info" : {
+        Type : "Choice",
+        Choices : [
+          {
+            And : [
+              {
+                Variable : "$.detail",
+                IsNull : false
+              },
+              {
+                Variable : "$.detail",
+                IsPresent : true
+              },
+              {
+                Variable : "$.detail.findings",
+                IsNull : false
+              },
+              {
+                Variable : "$.detail.findings",
+                IsPresent : true
+              },
+              {
+                Variable : "$.detail.findings[0].FirstObservedAt",
+                IsNull : false
+              },
+              {
+                Variable : "$.detail.findings[0].FirstObservedAt",
+                IsPresent : true
+              },
+              {
+                Variable : "$.detail.findings[0].LastObservedAt",
+                IsNull : false
+              },
+              {
+                Variable : "$.detail.findings[0].LastObservedAt",
+                IsPresent : true
+              }              
+            ]
+            Next : "New Finding Check"
+          }
+        ]
+      }
       "New Finding Check" : {
         Type : "Choice",
         Choices : [
