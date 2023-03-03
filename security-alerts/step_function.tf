@@ -2,7 +2,7 @@ resource "aws_sfn_state_machine" "sechub_state_machine" {
   name     = var.step_function_name
   role_arn = aws_iam_role.sfn_sechub_role.arn
   definition = jsonencode({
-    Comment : "A description of my state machine",
+    Comment : "This state machine attempts to reduce duplicate alerts that have the same FirstObservedAt date for a given finding.",
     StartAt : "New Finding Check",
     States : {
       "New Finding Check" : {
@@ -15,7 +15,7 @@ resource "aws_sfn_state_machine" "sechub_state_machine" {
           }
         ],
         Default : "Success",
-        Comment : "if this is the first time we have seen the finding { alert } else { suppress} "
+        Comment : "if this is the first time we have seen the finding { alert } else { suppress } "
       },
       "SNS Publish" : {
         Type : "Task",
