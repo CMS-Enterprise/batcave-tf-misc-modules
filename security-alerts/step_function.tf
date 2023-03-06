@@ -66,7 +66,7 @@ resource "aws_sfn_state_machine" "sechub_state_machine" {
         },
         "End" : true,
         "Comment" : "Publish finding to slack"
-      }
+      },
       Default : "Success",
       Comment : "if this is the first time we have seen the finding { alert } else { suppress } "
       "Success" : {
