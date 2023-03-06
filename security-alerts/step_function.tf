@@ -10,22 +10,22 @@ resource "aws_sfn_state_machine" "sechub_state_machine" {
         Choices : [
           {
             And : [
-              {
-                Variable : "$.detail",
-                IsNull : false
-              },
-              {
-                Variable : "$.detail",
-                IsPresent : true
-              },
-              {
-                Variable : "$.detail.findings",
-                IsNull : false
-              },
-              {
-                Variable : "$.detail.findings",
-                IsPresent : true
-              },
+              # {
+              #   Variable : "$.detail",
+              #   IsNull : false
+              # },
+              # {
+              #   Variable : "$.detail",
+              #   IsPresent : true
+              # },
+              # {
+              #   Variable : "$.detail.findings",
+              #   IsNull : false
+              # },
+              # {
+              #   Variable : "$.detail.findings",
+              #   IsPresent : true
+              # },
               {
                 Variable : "$.detail.findings[0].FirstObservedAt",
                 IsNull : false
@@ -46,7 +46,6 @@ resource "aws_sfn_state_machine" "sechub_state_machine" {
             Next : "New Finding Check"
           }
         ]
-        Default : "SNS Publish"
       }
       "New Finding Check" : {
         Type : "Choice",
@@ -57,22 +56,22 @@ resource "aws_sfn_state_machine" "sechub_state_machine" {
             Next : "SNS Publish"
           }
         ],
+        "SNS Publish" : {
+          Type : "Task",
+          Resource : "arn:aws:states:::sns:publish",
+          Parameters : {
+            "Message.$" : "$",
+            TopicArn : aws_sns_topic.slack_topic.arn
+          },
+          "End" : true,
+          "Comment" : "Publish finding to slack"
+        }
         Default : "Success",
         Comment : "if this is the first time we have seen the finding { alert } else { suppress } "
       },
       "Success" : {
         "Type" : "Succeed"
       }
-    }
-    "SNS Publish" : {
-        Type : "Task",
-        Resource : "arn:aws:states:::sns:publish",
-        Parameters : {
-          "Message.$" : "$",
-          TopicArn : aws_sns_topic.slack_topic.arn
-        },
-        "End" : true,
-        "Comment" : "Publish finding to slack"
     }
   })
 }
