@@ -45,7 +45,8 @@ resource "aws_sfn_state_machine" "sechub_state_machine" {
             ]
             Next : "New Finding Check"
           }
-        ]
+        ],
+        Default : "Success"
       },
       "New Finding Check" : {
         Type : "Choice",
@@ -58,9 +59,6 @@ resource "aws_sfn_state_machine" "sechub_state_machine" {
         ],
         Default : "Success",
         Comment : "if this is the first time we have seen the finding { alert } else { suppress } "
-        "Success" : {
-          "Type" : "Succeed"
-        }
       },
       "SNS Publish" : {
         Type : "Task",
@@ -71,7 +69,10 @@ resource "aws_sfn_state_machine" "sechub_state_machine" {
         },
         "End" : true,
         "Comment" : "Publish finding to slack"
-      }
+      },
+      "Success" : {
+          "Type" : "Succeed"
+        }
     }
   })
 }
