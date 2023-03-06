@@ -41,7 +41,7 @@ resource "aws_sfn_state_machine" "sechub_state_machine" {
               {
                 Variable : "$.detail.findings[0].LastObservedAt",
                 IsPresent : true
-              }              
+              }
             ]
             Next : "New Finding Check"
           }
