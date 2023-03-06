@@ -46,7 +46,7 @@ resource "aws_sfn_state_machine" "sechub_state_machine" {
             Next : "New Finding Check"
           }
         ]
-      }
+      },
       "New Finding Check" : {
         Type : "Choice",
         Choices : [
@@ -55,20 +55,20 @@ resource "aws_sfn_state_machine" "sechub_state_machine" {
             TimestampEqualsPath : "$.detail.findings[0].LastObservedAt",
             Next : "SNS Publish"
           }
-        ],
-        "SNS Publish" : {
-          Type : "Task",
-          Resource : "arn:aws:states:::sns:publish",
-          Parameters : {
-            "Message.$" : "$",
-            TopicArn : aws_sns_topic.slack_topic.arn
-          },
-          "End" : true,
-          "Comment" : "Publish finding to slack"
-        }
-        Default : "Success",
-        Comment : "if this is the first time we have seen the finding { alert } else { suppress } "
+        ]
       },
+      "SNS Publish" : {
+        Type : "Task",
+        Resource : "arn:aws:states:::sns:publish",
+        Parameters : {
+          "Message.$" : "$",
+          TopicArn : aws_sns_topic.slack_topic.arn
+        },
+        "End" : true,
+        "Comment" : "Publish finding to slack"
+      }
+      Default : "Success",
+      Comment : "if this is the first time we have seen the finding { alert } else { suppress } "
       "Success" : {
         "Type" : "Succeed"
       }
