@@ -10,37 +10,24 @@ resource "aws_sfn_state_machine" "sechub_state_machine" {
         Choices : [
           {
             And : [
-              # {
-              #   Variable : "$.detail",
-              #   IsNull : false
-              # },
-              # {
-              #   Variable : "$.detail",
-              #   IsPresent : true
-              # },
-              # {
-              #   Variable : "$.detail.findings",
-              #   IsNull : false
-              # },
-              # {
-              #   Variable : "$.detail.findings",
-              #   IsPresent : true
-              # },
-              {
-                Variable : "$.detail.findings[0].FirstObservedAt",
-                IsNull : false
-              },
+              # The isPresent check needs to be called first.
+              # The isNull check will fail with an error if the key/value pair isn't present.
+              # This was the opposite behavior that was expected.
               {
                 Variable : "$.detail.findings[0].FirstObservedAt",
                 IsPresent : true
               },
               {
                 Variable : "$.detail.findings[0].LastObservedAt",
+                IsPresent : true
+              },
+              {
+                Variable : "$.detail.findings[0].FirstObservedAt",
                 IsNull : false
               },
               {
                 Variable : "$.detail.findings[0].LastObservedAt",
-                IsPresent : true
+                IsNull : false
               }
             ]
             Next : "New Finding Check"
