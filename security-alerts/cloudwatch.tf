@@ -26,3 +26,16 @@ resource "aws_cloudwatch_metric_alarm" "trend_alarm" {
   namespace           = "Trend"
   alarm_actions       = [aws_sns_topic.slack_topic.arn]
 }
+
+resource "aws_cloudwatch_metric_alarm" "sechub_statemachine_alarm" {
+  alarm_name          = "sechub_statemachine_alarm"
+  metric_name         = "ExecutionsFailed"
+  namespace           = "AWS/States"
+  threshold           = "0"
+  statistic           = "Sum"
+  comparison_operator = "GreaterThanThreshold"
+  datapoints_to_alarm = "1"
+  evaluation_periods  = "1"
+  period              = "60"
+  alarm_actions       = [aws_sns_topic.slack_topic.arn]
+}
