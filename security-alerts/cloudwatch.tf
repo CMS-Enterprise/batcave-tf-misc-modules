@@ -31,11 +31,14 @@ resource "aws_cloudwatch_metric_alarm" "sechub_statemachine_alarm" {
   alarm_name          = "sechub_statemachine_alarm"
   metric_name         = "ExecutionsFailed"
   namespace           = "AWS/States"
-  threshold           = "0"
+  threshold           = "1"
   statistic           = "Sum"
-  comparison_operator = "GreaterThanThreshold"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
   datapoints_to_alarm = "1"
   evaluation_periods  = "1"
   period              = "60"
   alarm_actions       = [aws_sns_topic.slack_topic.arn]
+  dimensions          = {
+    StateMachineArn = aws_sfn_state_machine.sechub_state_machine.arn
+  }
 }

@@ -26,6 +26,7 @@ data "aws_iam_policy_document" "kms_key" {
       identifiers = [
         "events.amazonaws.com",
         "chatbot.amazonaws.com",
+        "cloudwatch.amazonaws.com"
       ]
     }
   }
