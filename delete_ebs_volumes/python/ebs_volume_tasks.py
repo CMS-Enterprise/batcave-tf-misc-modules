@@ -3,6 +3,7 @@ import logging
 import os
 import re
 import tempfile
+from datetime import datetime, timedelta
 
 import boto3
 from botocore.signers import RequestSigner
@@ -155,3 +156,11 @@ def cleanup(dry_run=False):
                         cluster_name,
                         err
                     )
+    snapshot_cutoff_date = datetime.datetime.now() - datetime.timedelta(days=7)
+    for snapshot in ec2.snapshots.filter(Filters=[{'Name': 'status', 'Values': ['completed']}]):
+        if snapshot.start_time < snapshot_cutoff_date:
+            logger.info(f"Deleting snapshot {snapshot.snapshot_id} created on {snapshot.start_time}")
+            if not dry_run:
+                snapshot.delete()
+            else:
+                logger.info(f"[dry_run] Snapshot {snapshot.snapshot_id} created on {snapshot.start_time} would be deleted")
