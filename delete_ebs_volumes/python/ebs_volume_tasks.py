@@ -3,6 +3,7 @@ import logging
 import os
 import re
 import tempfile
+import pytz
 from datetime import datetime, timedelta
 
 import boto3
@@ -12,12 +13,14 @@ from kubernetes.client import ApiException
 
 from kubernetes_helper import PersistentVolumeIterable
 
+utc = pytz.utc
 logger = logging.getLogger(__name__)
 region = os.environ.get('AWS_REGION') or os.environ.get('AWS_DEFAULT_REGION') or 'us-east-1'
 
 session = boto3.session.Session()
 sts = session.client('sts', region_name=region)
 ec2 = boto3.resource('ec2', region_name=region)
+ec2s = boto3.client('ec2', region_name=region)
 eks = boto3.client('eks', region_name=region)
 
 STS_TOKEN_EXPIRES_IN = 60
@@ -156,11 +159,23 @@ def cleanup(dry_run=False):
                         cluster_name,
                         err
                     )
-    snapshot_cutoff_date = datetime.datetime.now() - datetime.timedelta(days=7)
-    for snapshot in ec2.snapshots.filter(Filters=[{'Name': 'status', 'Values': ['completed']}]):
-        if snapshot.start_time < snapshot_cutoff_date:
-            logger.info(f"Deleting snapshot {snapshot.snapshot_id} created on {snapshot.start_time}")
+    
+    snapshot_cutoff_date = utc.localize(datetime.now() - timedelta(days=7))
+    snaps = ec2s.describe_snapshots(
+        OwnerIds=['self'],
+        Filters=[
+            {
+                'Name': 'status',
+                'Values': ['completed'],
+            },
+        ],
+    )    
+    for snapshot in snaps['Snapshots']:
+        sid = snapshot['SnapshotId']
+        if snapshot['StartTime'] < snapshot_cutoff_date:
             if not dry_run:
-                snapshot.delete()
+                logger.info("Deleting snapshot {snapshot['SnapshotId']} created on {snapshot['StartTime']}")
+                ec2s.delete_snapshot(SnapshotId=snapshot['SnapshotId'])
             else:
-                logger.info(f"[dry_run] Snapshot {snapshot.snapshot_id} created on {snapshot.start_time} would be deleted")
+                logger.info("[dry_run] Snapshot {snapshot['SnapshotId']} created on {snapshot['StartTime']"} would be deleted")
+                print('[dry_run] Would delete the following snapshot ' + sid) 
