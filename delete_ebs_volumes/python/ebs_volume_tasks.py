@@ -177,5 +177,5 @@ def cleanup(dry_run=False):
                 logger.info("Deleting snapshot {snapshot['SnapshotId']} created on {snapshot['StartTime']}")
                 ec2s.delete_snapshot(SnapshotId=snapshot['SnapshotId'])
             else:
-                logger.info("[dry_run] Snapshot {snapshot['SnapshotId']} created on {snapshot['StartTime']"} would be deleted")
+                logger.info("[dry_run] Snapshot {snapshot['SnapshotId']} created on {snapshot['StartTime']} would be deleted")
                 print('[dry_run] Would delete the following snapshot ' + sid) 
