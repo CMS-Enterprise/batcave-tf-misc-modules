@@ -3,8 +3,7 @@ import logging
 import os
 import re
 import tempfile
-import pytz
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import boto3
 from botocore.signers import RequestSigner
@@ -13,7 +12,6 @@ from kubernetes.client import ApiException
 
 from kubernetes_helper import PersistentVolumeIterable
 
-utc = pytz.utc
 logger = logging.getLogger(__name__)
 region = os.environ.get('AWS_REGION') or os.environ.get('AWS_DEFAULT_REGION') or 'us-east-1'
 
@@ -160,7 +158,7 @@ def cleanup(dry_run=False):
                         err
                     )
     
-    snapshot_cutoff_date = utc.localize(datetime.now() - timedelta(days=14))
+    snapshot_cutoff_date = datetime.now(tz=timezone.utc) - timedelta(days=14)
     snaps = ec2s.describe_snapshots(
         OwnerIds=['self'],
         Filters=[
