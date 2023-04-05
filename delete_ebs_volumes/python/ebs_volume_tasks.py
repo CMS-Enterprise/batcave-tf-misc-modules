@@ -3,6 +3,7 @@ import logging
 import os
 import re
 import tempfile
+from datetime import datetime, timedelta, timezone
 
 import boto3
 from botocore.signers import RequestSigner
@@ -16,7 +17,8 @@ region = os.environ.get('AWS_REGION') or os.environ.get('AWS_DEFAULT_REGION') or
 
 session = boto3.session.Session()
 sts = session.client('sts', region_name=region)
-ec2 = boto3.resource('ec2', region_name=region)
+ec2_res = boto3.resource('ec2', region_name=region)
+ec2_cli = boto3.client('ec2', region_name=region)
 eks = boto3.client('eks', region_name=region)
 
 STS_TOKEN_EXPIRES_IN = 60
@@ -109,7 +111,7 @@ def cleanup(dry_run=False):
                     err
                 )
 
-    for vol in ec2.volumes.all():
+    for vol in ec2_res.volumes.all():
         if vol.state == 'available':
             vid = vol.id
             if vid in bound_volumes:
@@ -120,7 +122,7 @@ def cleanup(dry_run=False):
             for tag in (vol.tags or []):
                 tags[tag['Key']] = tag['Value']
             if 'DELETE' not in tags:
-                v = ec2.Volume(vid)
+                v = ec2_res.Volume(vid)
                 deleted = True
                 if not dry_run:
                     print('DELETE tag not found. Deleting the Available volume ' + vid)
@@ -128,7 +130,7 @@ def cleanup(dry_run=False):
                 else:
                     print('[dry_run] DELETE tag not found. Would delete the Available volume ' + vid)
             elif tags['DELETE'] not in ['NO', 'No', 'no'] and vol.state == 'available':
-                v = ec2.Volume(vid)
+                v = ec2_res.Volume(vid)
                 deleted = True
                 if not dry_run:
                     print('DELETE tag found and value not equal to NO. Deleting the Available volume ' + vid)
@@ -155,3 +157,23 @@ def cleanup(dry_run=False):
                         cluster_name,
                         err
                     )
+    
+    snapshot_cutoff_date = datetime.now(tz=timezone.utc) - timedelta(days=14)
+    snaps = ec2_cli.describe_snapshots(
+        OwnerIds=['self'],
+        Filters=[
+            {
+                'Name': 'status',
+                'Values': ['completed'],
+            },
+        ],
+    )    
+    for snapshot in snaps['Snapshots']:
+        sid = snapshot['SnapshotId']
+        if snapshot['StartTime'] < snapshot_cutoff_date:
+            if not dry_run:
+                logger.info("Deleting snapshot {snapshot['SnapshotId']} created on {snapshot['StartTime']}")
+                ec2_cli.delete_snapshot(SnapshotId=snapshot['SnapshotId'])
+            else:
+                logger.info("[dry_run] Snapshot {snapshot['SnapshotId']} created on {snapshot['StartTime']} would be deleted")
+                print('[dry_run] Would delete the following snapshot ' + sid) 
