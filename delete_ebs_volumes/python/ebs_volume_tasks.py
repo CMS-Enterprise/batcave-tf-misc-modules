@@ -160,7 +160,7 @@ def cleanup(dry_run=False):
                         err
                     )
     
-    snapshot_cutoff_date = utc.localize(datetime.now() - timedelta(days=7))
+    snapshot_cutoff_date = utc.localize(datetime.now() - timedelta(days=14))
     snaps = ec2s.describe_snapshots(
         OwnerIds=['self'],
         Filters=[
