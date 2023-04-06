@@ -157,7 +157,6 @@ def cleanup(dry_run=False):
                         cluster_name,
                         err
                     )
-    
     snapshot_cutoff_date = datetime.now(tz=timezone.utc) - timedelta(days=14)
     snaps = ec2_cli.describe_snapshots(
         OwnerIds=['self'],
@@ -167,13 +166,21 @@ def cleanup(dry_run=False):
                 'Values': ['completed'],
             },
         ],
-    )    
+    )
     for snapshot in snaps['Snapshots']:
         sid = snapshot['SnapshotId']
-        if snapshot['StartTime'] < snapshot_cutoff_date:
-            if not dry_run:
-                logger.info("Deleting snapshot {snapshot['SnapshotId']} created on {snapshot['StartTime']}")
-                ec2_cli.delete_snapshot(SnapshotId=snapshot['SnapshotId'])
+        time = snapshot['StartTime']
+        try:
+            if snapshot['StartTime'] < snapshot_cutoff_date:
+                if not dry_run:
+                    logger.info(f'Deleting snapshot {sid} created at {time}')
+                    ec2_cli.delete_snapshot(SnapshotId=snapshot['SnapshotId'])
+                else:
+                    logger.info(f'[dry_run] Deleting snapshot {sid} created at {time}')
+                    print('[dry_run] Would delete the following snapshot ' + sid)
+        except Exception as e:
+            if 'InvalidSnapshot.InUse' in str(e):
+                logger.warning(f'Skipping snapshot {sid} due to {str(e)}')
+                continue
             else:
-                logger.info("[dry_run] Snapshot {snapshot['SnapshotId']} created on {snapshot['StartTime']} would be deleted")
-                print('[dry_run] Would delete the following snapshot ' + sid) 
+                logger.error(f'Failed to delete snapshot {sid} due to {str(e)}')
