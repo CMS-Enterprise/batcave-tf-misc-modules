@@ -157,6 +157,7 @@ def cleanup(dry_run=False):
                         cluster_name,
                         err
                     )
+
     snapshot_cutoff_date = datetime.now(tz=timezone.utc) - timedelta(days=14)
     snaps = ec2_cli.describe_snapshots(
         OwnerIds=['self'],
