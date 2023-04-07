@@ -1,6 +1,6 @@
 data "archive_file" "transform-lambda-package" {
   type        = "zip"
-  source_file = "code/sechub_transform"
+  source_file = "code/sechub_transform.py"
   output_path = "package.zip"
 }
 
