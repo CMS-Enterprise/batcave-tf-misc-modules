@@ -55,7 +55,8 @@ resource "aws_sfn_state_machine" "sechub_state_machine" {
           "Payload.$" : "$",
           Qualifier : "$LATEST"
         },
-        ResultPath : "$.lambdaOutput",
+        ResultPath : "$",
+        OutputPath : "$.Payload"
         Next : "SNS Publish"
       },
       "SNS Publish" : {
