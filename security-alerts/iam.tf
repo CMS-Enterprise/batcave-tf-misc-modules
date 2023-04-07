@@ -140,7 +140,7 @@ data "aws_iam_policy_document" "sfn_sechub_policy" {
       "lambda:InvokeFunction"
     ]
     resources = [
-      aws_lambda_function.transform-lambda.arn
+      "${aws_lambda_function.transform-lambda.arn}:$LATEST"
     ]
   }
 }
