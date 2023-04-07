@@ -18,7 +18,7 @@ data "aws_iam_policy_document" "transform_trust_policy" {
 }
 
 resource "aws_iam_role" "transform-role" {
-  assume_role_policy = data.aws_iam_policy_document.trust_policy.json
+  assume_role_policy = data.aws_iam_policy_document.transform_trust_policy.json
 }
 
 data "aws_iam_policy_document" "transform-role-policy-document" {
