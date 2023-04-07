@@ -18,7 +18,9 @@ data "aws_iam_policy_document" "transform_trust_policy" {
 }
 
 resource "aws_iam_role" "transform-role" {
-  assume_role_policy = data.aws_iam_policy_document.transform_trust_policy.json
+  assume_role_policy   = data.aws_iam_policy_document.transform_trust_policy.json
+  path                 = var.iam_role_path
+  permissions_boundary = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/cms-cloud-admin/developer-boundary-policy"
 }
 
 data "aws_iam_policy_document" "transform-role-policy-document" {
@@ -43,6 +45,7 @@ resource "aws_iam_policy_attachment" "transform-role-policy-attachment" {
 
 resource "aws_iam_policy" "transform-role-policy" {
   policy = data.aws_iam_policy_document.transform-role-policy-document.json
+  path   = var.iam_role_path
 }
 
 resource "aws_lambda_function" "transform-lambda" {
@@ -56,7 +59,7 @@ resource "aws_lambda_function" "transform-lambda" {
   source_code_hash = data.archive_file.transform-lambda-package.output_base64sha256
   environment {
     variables = {
-        ACCOUNT_NAME = var.account_name
+      ACCOUNT_NAME = var.account_name
     }
   }
 }
