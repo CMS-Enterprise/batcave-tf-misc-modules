@@ -22,3 +22,7 @@ variable "sechub_nessus_rule_name" {
   type    = string
   default = "sechub-findings-to-lambda-nessus"
 }
+
+variable "account_name" {
+  type = string
+}

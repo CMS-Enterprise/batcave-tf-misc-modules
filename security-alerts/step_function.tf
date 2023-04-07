@@ -41,11 +41,23 @@ resource "aws_sfn_state_machine" "sechub_state_machine" {
           {
             Variable : "$.detail.findings[0].FirstObservedAt",
             TimestampEqualsPath : "$.detail.findings[0].LastObservedAt",
-            Next : "SNS Publish"
+            Next : "Transform"
           }
         ],
         Default : "Success",
         Comment : "if this is the first time we have seen the finding { alert } else { suppress } "
+      },
+      "Transform" : {
+        Type : "Task"
+        Resource : "arn:aws:states:::lambda:invoke",
+        Parameters : {
+          FunctionName : aws_lambda_function.transform-lambda.function_name
+          "Payload.$" : "$",
+          Qualifier : "$LATEST"
+        },
+        ResultPath : "$",
+        OutputPath : "$.Payload"
+        Next : "SNS Publish"
       },
       "SNS Publish" : {
         Type : "Task",
@@ -58,8 +70,8 @@ resource "aws_sfn_state_machine" "sechub_state_machine" {
         "Comment" : "Publish finding to slack"
       },
       "Success" : {
-          "Type" : "Succeed"
-        }
+        "Type" : "Succeed"
+      }
     }
   })
 }

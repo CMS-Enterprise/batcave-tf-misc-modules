@@ -38,7 +38,7 @@ resource "aws_cloudwatch_metric_alarm" "sechub_statemachine_alarm" {
   evaluation_periods  = "1"
   period              = "60"
   alarm_actions       = [aws_sns_topic.slack_topic.arn]
-  dimensions          = {
+  dimensions = {
     StateMachineArn = aws_sfn_state_machine.sechub_state_machine.arn
   }
 }
