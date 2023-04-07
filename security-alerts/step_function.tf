@@ -51,7 +51,7 @@ resource "aws_sfn_state_machine" "sechub_state_machine" {
         Type : "Task"
         Resource : "arn:aws:states:::lambda:invoke",
         Parameters : {
-          FunctionName : aws_lambda_function.transform-lambda.name
+          FunctionName : aws_lambda_function.transform-lambda.function_name
           "Payload.$" : "$",
           Qualifier : "$LATEST"
         },
