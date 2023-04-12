@@ -88,6 +88,9 @@ data "aws_iam_policy_document" "gd_export_kms_key" {
         "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role${var.iam_role_path}PantherLogProcessingRole-${var.account_name}"
       ]
     }
+    resources = [
+      "arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:key/*"
+    ]
   }
 
 }
