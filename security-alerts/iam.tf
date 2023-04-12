@@ -134,6 +134,15 @@ data "aws_iam_policy_document" "sfn_sechub_policy" {
       aws_kms_key.kms_key.arn
     ]
   }
+  statement {
+    effect = "Allow"
+    actions = [
+      "lambda:InvokeFunction"
+    ]
+    resources = [
+      "${aws_lambda_function.transform-lambda.arn}:$LATEST"
+    ]
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "sfn_sechub_attach" {

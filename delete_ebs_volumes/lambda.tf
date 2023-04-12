@@ -136,6 +136,15 @@ resource "aws_iam_policy" "delete_ebs_volumes_lambda_policy" {
           ],
           "Effect" : "Allow",
           "Resource" : "*"
+        },
+        {
+          "Sid" : "Snapshots",
+          "Action" : [
+            "ec2:DeleteSnapshot",
+            "ec2:DescribeSnapshots"
+          ],
+          "Effect" : "Allow",
+          "Resource" : "*"
         }
       ]
     }
