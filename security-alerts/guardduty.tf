@@ -9,3 +9,8 @@ resource "aws_guardduty_publishing_destination" "s3-export" {
 data "aws_s3_bucket" "cms_cloud_logs" {
   bucket = "cms-cloud-${data.aws_caller_identity.current.account_id}-${data.aws_region.current.name}"
 }
+
+resource "aws_s3_bucket_object" "guardduty_directory" {
+    bucket  = "${data.aws_s3_bucket.cms_cloud_logs.id}"
+    key     =  "guardduty/"
+}
