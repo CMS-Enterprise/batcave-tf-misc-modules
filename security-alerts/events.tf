@@ -66,31 +66,3 @@ resource "aws_cloudwatch_event_target" "nessus" {
   arn       = aws_sfn_state_machine.sechub_state_machine.arn
   role_arn  = aws_iam_role.sfn_target_role.arn
 }
-
-# GuardDuty
-resource "aws_cloudwatch_event_rule" "guardduty" {
-  name        = "guardduty-findings-to-lambda"
-  description = "Sends GuardDuty findings to a Slack Lambda"
-
-  event_pattern = <<EOF
-{
-  "source": [
-    "aws.guardduty"
-  ],
-  "detail-type": [
-    "GuardDuty Finding"
-  ],
-  "detail": {
-    "severity": [
-      { "numeric": [ ">", 3.9 ] }
-    ]
-  }
-}
-EOF
-}
-
-resource "aws_cloudwatch_event_target" "guardduty" {
-  rule      = aws_cloudwatch_event_rule.guardduty.name
-  target_id = aws_cloudwatch_event_rule.guardduty.name
-  arn       = aws_sns_topic.slack_topic.id
-}
