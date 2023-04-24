@@ -176,3 +176,20 @@ variable "rds_arns" {
   }
 }
 
+# SES
+variable "attach_ses_policy" {
+  description = "Determines whether to attach the ses permissions to the role"
+  type        = bool
+  default     = false
+}
+
+variable "ses_arns" {
+  description = "ARNs of ses to add to policy"
+  type        = list(string)
+  default     = []
+  validation {
+    condition = !anytrue([for arn in var.ses_arns : (length(regexall("\\*|\\?", arn)) == 0 ? false : true)] )
+    error_message = "No '*' or '?' allowed in ses_arns variable"
+  }
+}
+

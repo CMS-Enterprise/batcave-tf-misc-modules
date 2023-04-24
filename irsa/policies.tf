@@ -211,3 +211,37 @@ resource "aws_iam_role_policy_attachment" "rds" {
   role       = aws_iam_role.this[0].name
   policy_arn = aws_iam_policy.rds[0].arn
 }
+
+################################################################################
+# AWS SES Policy
+################################################################################
+data "aws_iam_policy_document" "ses" {
+  count = var.create_role &&  var.attach_ses_policy ? 1 : 0
+
+  statement {
+    sid = "SesConnect"
+    actions = [
+      "ses:SendEmail",
+      "ses:SendRawEmail",
+    ]
+    resources = var.ses_arns
+  }
+}
+
+resource "aws_iam_policy" "ses" {
+  count = var.create_role && var.attach_ses_policy ? 1 : 0
+
+  name_prefix = "${var.policy_name_prefix}${var.app_name}-"
+  path        = var.role_path
+  description = "Interact with SES"
+  policy      = data.aws_iam_policy_document.ses[0].json
+
+  tags = var.tags
+}
+
+resource "aws_iam_role_policy_attachment" "ses" {
+  count = var.create_role && var.attach_ses_policy ? 1 : 0
+
+  role       = aws_iam_role.this[0].name
+  policy_arn = aws_iam_policy.ses[0].arn
+}
