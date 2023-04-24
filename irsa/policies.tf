@@ -64,6 +64,7 @@ data "aws_iam_policy_document" "s3" {
       "s3:GetObject",
       "s3:ListMultipartUploadParts",
       "s3:PutObject",
+      "s3:GetObjectTagging"
     ]
     resources = [for bucket in var.s3_bucket_arns : "${bucket}/*"]
   }
@@ -244,4 +245,37 @@ resource "aws_iam_role_policy_attachment" "ses" {
 
   role       = aws_iam_role.this[0].name
   policy_arn = aws_iam_policy.ses[0].arn
+}
+
+################################################################################
+# AWS Lambda Policy
+################################################################################
+data "aws_iam_policy_document" "lambda" {
+  count = var.create_role &&  var.attach_lambda_policy ? 1 : 0
+
+  statement {
+    sid = "LambdaConnect"
+    actions = [
+      "lambda:InvokeFunction"
+    ]
+    resources = var.lambda_arns
+  }
+}
+
+resource "aws_iam_policy" "lambda" {
+  count = var.create_role && var.attach_lambda_policy ? 1 : 0
+
+  name_prefix = "${var.policy_name_prefix}${var.app_name}-"
+  path        = var.role_path
+  description = "Interact with Lambda"
+  policy      = data.aws_iam_policy_document.lambda[0].json
+
+  tags = var.tags
+}
+
+resource "aws_iam_role_policy_attachment" "lambda" {
+  count = var.create_role && var.attach_lambda_policy ? 1 : 0
+
+  role       = aws_iam_role.this[0].name
+  policy_arn = aws_iam_policy.lambda[0].arn
 }

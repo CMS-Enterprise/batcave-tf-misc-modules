@@ -193,3 +193,21 @@ variable "ses_arns" {
   }
 }
 
+# Lambda
+variable "attach_lambda_policy" {
+  description = "Determines whether to attach the lambda permissions to the role"
+  type        = bool
+  default     = false
+}
+
+variable "lambda_arns" {
+  description = "ARNs of lambda to add to policy"
+  type        = list(string)
+  default     = []
+  validation {
+    condition = !anytrue([for arn in var.lambda_arns : (length(regexall("\\*|\\?", arn)) == 0 ? false : true)] )
+    error_message = "No '*' or '?' allowed in lambda_arns variable"
+  }
+}
+
+
