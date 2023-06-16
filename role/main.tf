@@ -107,6 +107,7 @@ resource "aws_iam_policy" "api-policy" {
             "sqs:GetQueueUrl",
             "sqs:DeleteMessage",
             "sqs:ReceiveMessage",
+            "sqs:SendMessage",
             "sqs:GetQueueAttributes"
             ],
           "Resource": ${local.ApiResources}
