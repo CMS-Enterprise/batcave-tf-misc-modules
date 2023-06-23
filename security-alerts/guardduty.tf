@@ -7,6 +7,6 @@ resource "aws_guardduty_publishing_destination" "s3-export" {
 }
 
 resource "aws_s3_object" "guardduty_directory" {
-    bucket  = "${aws_s3_bucket.gd_export_s3_bucket.id}"
-    key     =  "guardduty/"
+  bucket = aws_s3_bucket.gd_export_s3_bucket.id
+  key    = "guardduty/"
 }
