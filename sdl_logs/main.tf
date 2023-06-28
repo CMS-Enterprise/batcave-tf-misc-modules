@@ -61,6 +61,7 @@ resource "aws_iam_role_policy" "read_data_policy" {
         Action : "s3:GetObject",
         Resource : [
           "${data.aws_s3_bucket.cms_logging_bucket.arn}/*",
+          "${aws_s3_bucket.gd_export_s3_bucket.arn}/*"
         ]
     }, ]
   })
