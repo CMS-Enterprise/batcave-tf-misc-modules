@@ -35,7 +35,7 @@ data "aws_iam_policy_document" "kms_key" {
       ]
     }
   }
-   statement {
+  statement {
     effect    = "Allow"
     actions   = ["kms:*"]
     resources = ["*"]
@@ -71,7 +71,7 @@ data "aws_iam_policy_document" "kms_key" {
     principals {
       type = "AWS"
       identifiers = [
-       aws_iam_role.log_processing_role.arn
+        aws_iam_role.log_processing_role.arn
       ]
     }
     resources = [

@@ -55,7 +55,7 @@ resource "aws_s3_bucket_notification" "panther_bucket_notifications" {
   bucket = aws_s3_bucket.gd_export_s3_bucket.id
 
   topic {
-    topic_arn     = aws_sns_topic.panther_topic.arn
-    events        = ["s3:ObjectCreated:*"]
-   }
+    topic_arn = aws_sns_topic.panther_topic.arn
+    events    = ["s3:ObjectCreated:*"]
+  }
 }
