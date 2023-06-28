@@ -50,3 +50,12 @@ resource "aws_s3_bucket_policy" "gd_s3_export_bucket" {
 resource "aws_s3_bucket" "gd_export_s3_bucket" {
   bucket = "batcave-gd-s3-export-${data.aws_caller_identity.current.account_id}-${data.aws_region.current.name}"
 }
+
+resource "aws_s3_bucket_notification" "panther_bucket_notifications" {
+  bucket = aws_s3_bucket.gd_export_s3_bucket.id
+
+  topic {
+    topic_arn     = aws_sns_topic.panther_topic.arn
+    events        = ["s3:ObjectCreated:*"]
+   }
+}

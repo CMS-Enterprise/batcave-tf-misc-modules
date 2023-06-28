@@ -7,6 +7,8 @@
 
 data "aws_caller_identity" "current" {}
 
+data "aws_region" "current" {}
+
 # IAM roles for log ingestion from an S3 bucket
 resource "aws_iam_role" "log_processing_role" {
   name = "PantherLogProcessingRole-${var.role_suffix}"

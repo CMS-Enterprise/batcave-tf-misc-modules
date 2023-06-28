@@ -71,7 +71,7 @@ data "aws_iam_policy_document" "kms_key" {
     principals {
       type = "AWS"
       identifiers = [
-        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role${var.iam_role_path}PantherLogProcessingRole-${var.account_name}"
+       aws_iam_role.log_processing_role.arn
       ]
     }
     resources = [
