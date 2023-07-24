@@ -7,6 +7,8 @@
 
 data "aws_caller_identity" "current" {}
 
+data "aws_region" "current" {}
+
 # IAM roles for log ingestion from an S3 bucket
 resource "aws_iam_role" "log_processing_role" {
   name = "PantherLogProcessingRole-${var.role_suffix}"
@@ -59,6 +61,7 @@ resource "aws_iam_role_policy" "read_data_policy" {
         Action : "s3:GetObject",
         Resource : [
           "${data.aws_s3_bucket.cms_logging_bucket.arn}/*",
+          "${aws_s3_bucket.gd_export_s3_bucket.arn}/*"
         ]
     }, ]
   })
