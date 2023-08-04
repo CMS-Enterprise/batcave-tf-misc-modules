@@ -50,3 +50,9 @@ variable "permissions_boundary" {
   default     = null
   description = "IAM Role Permissions Boundary, if required."
 }
+
+variable "tags" {
+  description = "A mapping of tags to assign to all resources"
+  type        = map(string)
+  default     = {}
+}
