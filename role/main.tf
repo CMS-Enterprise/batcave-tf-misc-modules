@@ -180,17 +180,14 @@ resource "aws_iam_policy" "snowflake-access-policy" {
 resource "aws_iam_role_policy_attachment" "snowflake_policy" {
   role       = aws_iam_role.cms-cloud-s3-snowflake-role.name
   policy_arn = aws_iam_policy.snowflake-access-policy.arn
-  tags       = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "api_policy" {
   role       = aws_iam_role.api-service-role.name
   policy_arn = aws_iam_policy.api-policy.arn
-  tags       = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "job_scheduler_policy" {
   role       = aws_iam_role.job-scheduler-service-role.name
   policy_arn = aws_iam_policy.job-scheduler-policy.arn
-  tags       = var.tags
 }
