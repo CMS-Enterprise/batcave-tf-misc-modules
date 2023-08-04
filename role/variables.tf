@@ -50,3 +50,9 @@ variable "permissions_boundary" {
   default     = null
   description = "IAM Role Permissions Boundary, if required."
 }
+
+variable "make_job_scheduler_policy_and_role" {
+  type        = bool
+  default     = true
+  description = "Create job scheduler policy, attachment, and role, if required"
+}
