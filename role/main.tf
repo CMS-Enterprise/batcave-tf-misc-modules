@@ -30,6 +30,7 @@ resource "aws_iam_role" "api-service-role" {
 }
 
 resource "aws_iam_role" "job-scheduler-service-role" {
+  count = var.create_job_scheduler_policy_and_role ? 1 : 0
   name = "${var.GroupName}-job-scheduler-service-role"
   depends_on = [
       aws_iam_policy.job-scheduler-policy
@@ -122,6 +123,7 @@ locals {
 }
 
 resource "aws_iam_policy" "job-scheduler-policy" {
+  count = var.create_job_scheduler_policy_and_role ? 1 : 0
   name        = "${var.GroupName}-job-scheduler-policy"
   path        = "/delegatedadmin/developer/"
 
@@ -182,6 +184,8 @@ resource "aws_iam_role_policy_attachment" "api_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "job_scheduler_policy" {
+  count = var.create_job_scheduler_policy_and_role ? 1 : 0
   role       = aws_iam_role.job-scheduler-service-role.name
+  count = var.create_job_scheduler_policy_and_role ? 1 : 0
   policy_arn = aws_iam_policy.job-scheduler-policy.arn
 }
