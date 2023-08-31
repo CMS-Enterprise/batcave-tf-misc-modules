@@ -52,6 +52,10 @@ data "aws_iam_policy_document" "gd_export_s3_bucket" {
       aws_s3_bucket.gd_export_s3_bucket.arn,
       "${aws_s3_bucket.gd_export_s3_bucket.arn}/*"
     ]
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
     condition {
       test     = "Bool"
       variable = "aws:SecureTransport"
