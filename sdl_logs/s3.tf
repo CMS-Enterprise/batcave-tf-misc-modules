@@ -39,9 +39,23 @@ data "aws_iam_policy_document" "gd_export_s3_bucket" {
     effect    = "Allow"
     actions   = ["s3:PutObject"]
     resources = ["${aws_s3_bucket.gd_export_s3_bucket.arn}/*"]
-     principals {
+    principals {
       type        = "Service"
       identifiers = ["guardduty.amazonaws.com"]
+    }
+  }
+
+  statement {
+    effect  = "Deny"
+    actions = ["s3:*"]
+    resources = [
+      aws_s3_bucket.gd_export_s3_bucket.arn,
+      "${aws_s3_bucket.gd_export_s3_bucket.arn}/*"
+    ]
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values   = ["false"]
     }
   }
 }
