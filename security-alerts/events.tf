@@ -34,35 +34,35 @@ resource "aws_cloudwatch_event_target" "target" {
 }
 
 # Security hub nessus only
-resource "aws_cloudwatch_event_rule" "nessus" {
-  name          = "sechub-findings-to-lambda-nessus"
-  description   = "Sends Security Hub nessus findings to a Slack Lambda"
-  role_arn      = aws_iam_role.sfn_target_role.arn
-  event_pattern = <<EOF
-{
-  "source": [
-    "aws.securityhub"
-  ],
-  "detail-type": [
-    "Security Hub Findings - Imported"
-  ],
-  "detail": {
-    "findings": {
-      "RecordState": ["ACTIVE"],
-      "WorkflowState": ["NEW"],
-      "Severity": {
-        "Label": [ "CRITICAL" ]
-      },
-      "ProductName": [ "Default" ]
-    }
-  }
-}
-EOF
-}
+# resource "aws_cloudwatch_event_rule" "nessus" {
+#   name          = "sechub-findings-to-lambda-nessus"
+#   description   = "Sends Security Hub nessus findings to a Slack Lambda"
+#   role_arn      = aws_iam_role.sfn_target_role.arn
+#   event_pattern = <<EOF
+# {
+#   "source": [
+#     "aws.securityhub"
+#   ],
+#   "detail-type": [
+#     "Security Hub Findings - Imported"
+#   ],
+#   "detail": {
+#     "findings": {
+#       "RecordState": ["ACTIVE"],
+#       "WorkflowState": ["NEW"],
+#       "Severity": {
+#         "Label": [ "CRITICAL" ]
+#       },
+#       "ProductName": [ "Default" ]
+#     }
+#   }
+# }
+# EOF
+# }
 
-resource "aws_cloudwatch_event_target" "nessus" {
-  rule      = aws_cloudwatch_event_rule.nessus.name
-  target_id = aws_cloudwatch_event_rule.nessus.name
-  arn       = aws_sfn_state_machine.sechub_state_machine.arn
-  role_arn  = aws_iam_role.sfn_target_role.arn
-}
+# resource "aws_cloudwatch_event_target" "nessus" {
+#   rule      = aws_cloudwatch_event_rule.nessus.name
+#   target_id = aws_cloudwatch_event_rule.nessus.name
+#   arn       = aws_sfn_state_machine.sechub_state_machine.arn
+#   role_arn  = aws_iam_role.sfn_target_role.arn
+# }
