@@ -4,13 +4,13 @@ variable "cluster_name" {
   description = "Cluster Name."
 }
 
-variable "buffer_size" {
+variable "buffering_size" {
   type        = number
   default     = 128 # Maximum
   description = " Buffer incoming data to the specified size, in MBs, before delivering it to the destination"
 }
 
-variable "buffer_interval_in_seconds" {
+variable "buffering_interval_in_seconds" {
   type        = number
   default     = 300 # 5min
   description = "Buffer incoming data for the specified period of time, in seconds, before delivering it to the destination. The default value is 300"
