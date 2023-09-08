@@ -19,7 +19,7 @@ resource "aws_cloudwatch_event_rule" "rule" {
       "Severity": {
         "Label": [ "CRITICAL", "HIGH" ]
       },
-      "ProductName": [ { "anything-but": [ "Inspector", "Default" ] } ]
+      "ProductName": [ { "anything-but": [ "Inspector", "Default", "GuardDuty" ] } ]
     }
   }
 }
