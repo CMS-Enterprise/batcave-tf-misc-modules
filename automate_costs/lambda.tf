@@ -40,6 +40,7 @@ resource "aws_cloudwatch_event_rule" "schedule" {
 resource "aws_iam_policy" "s3_access_policy" {
   name        = "s3_read_write_policy"
   description = "IAM policy for read and write access to an S3 bucket"
+  path        = var.iam_path
 
   policy = jsonencode({
     Version   = "2012-10-17",
@@ -59,6 +60,8 @@ resource "aws_iam_policy" "s3_access_policy" {
 # Create an IAM role for the Lambda function
 resource "aws_iam_role" "lambda_role" {
   name = "lambda_s3_access_role"
+  path                 = var.iam_path
+  managed_policy_arns  = [aws_iam_policy.s3_access_policy.arn]
   permissions_boundary  = var.role_permissions_boundary_arn
 
   assume_role_policy = jsonencode({
