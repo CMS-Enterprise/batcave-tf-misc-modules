@@ -28,6 +28,14 @@ resource "aws_cloudwatch_event_target" "schedule_lambda" {
   target_id = "schedule_lambda_target"
   arn       = aws_lambda_function.s3_update_lambda.arn # Corrected the reference
 }
+
+# Create a CloudWatch Event Rule for scheduling
+resource "aws_cloudwatch_event_rule" "schedule" {
+  name        = "cms-batcave-cost-data-batcave-dev-schedule"
+  description = "Schedule for Lambda Function"
+  schedule_expression = "cron(00 00 * * ? *)"
+}
+
 # Create an IAM policy for S3 access
 resource "aws_iam_policy" "s3_access_policy" {
   name        = "s3_read_write_policy"
