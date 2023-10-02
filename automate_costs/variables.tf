@@ -16,3 +16,13 @@ variable "role_permissions_boundary_arn" {
   type        = string
   default     = "arn:aws:iam::373346310182:policy/cms-cloud-admin/developer-boundary-policy"
 }
+
+variable "iam_path" {}
+variable "permissions_boundary" {}
+variable "lambda_name" {}
+variable "aws_region" {}
+variable "environment" {}
+variable "project" {}
+variable "event_schedule_cron" {}
+variable "log_retention" {}
+variable "lambda_timeout" {}
