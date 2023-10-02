@@ -13,10 +13,6 @@ resource "aws_lambda_function" "s3_update_lambda" {
       OBJECT_KEY  = var.object_key
     }
   }
-  vpc_config {
-    security_group_ids = [aws_security_group.lambda.id]
-    subnet_ids         = data.aws_subnets.private.ids
-  }
 
   # Define the Lambda function's source code
   source_code_hash = filebase64sha256("python/lambda_function.zip") # Replace with your deployment package
