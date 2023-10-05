@@ -45,8 +45,8 @@ resource "aws_iam_policy" "s3_access_policy" {
         Action   = ["s3:GetObject", "s3:PutObject", "s3:ListBucket"],
         Effect   = "Allow",
         Resource = [
-          "arn:aws:s3:::cms-batcave-cost-data-batcave-${var.environment}/*",
-          "arn:aws:s3:::cms-batcave-cost-data-batcave-${var.environment}",
+          "arn:aws:s3:::${var.bucket_name}/*",
+          "arn:aws:s3:::${var.bucket_name}",
         ],
       },
     ],
