@@ -1,7 +1,7 @@
 # Create a Lambda function
 resource "aws_lambda_function" "s3_update_lambda" {
   filename      = "python/lambda_function.zip" # Path to your Lambda deployment package
-  function_name = "cms-batcave-cost-data-batcave-{var.environment}-update"
+  function_name = "cms-batcave-cost-data-batcave-${var.environment}-update"
   role          = aws_iam_role.lambda_role.arn
   handler       = "lambda_function.lambda_handler"
   runtime       = "python3.9"
@@ -9,8 +9,8 @@ resource "aws_lambda_function" "s3_update_lambda" {
   # Specify the S3 bucket and object key that the Lambda function will update
   environment {
     variables = {
-      BUCKET_NAME = "cms-batcave-cost-data-batcave-{var.environment}"
-      OBJECT_KEY  = "bat-{var.environment}/batcave-{var.environment}-daily-costs/batcave-{var.environment}-costs-QuickSightManifestAll.json"
+      BUCKET_NAME = "cms-batcave-cost-data-batcave-${var.environment}"
+      OBJECT_KEY  = "bat-${var.environment}/batcave-${var.environment}-daily-costs/batcave-${var.environment}-costs-QuickSightManifestAll.json"
     }
   }
 
@@ -27,7 +27,7 @@ resource "aws_cloudwatch_event_target" "schedule_lambda" {
 
 # Create a CloudWatch Event Rule for scheduling
 resource "aws_cloudwatch_event_rule" "schedule" {
-  name        = "cms-batcave-cost-data-batcave-{var.environment}-schedule"
+  name        = "cms-batcave-cost-data-batcave-${var.environment}-schedule"
   description = "Schedule for Lambda Function"
   schedule_expression = "cron(00 00 * * ? *)"
 }
