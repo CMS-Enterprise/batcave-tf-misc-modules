@@ -2,7 +2,7 @@
 variable "bucket_name" {
   type = string
   description = "The name of the s3 bucket"
-  default = "cms-batcave-cost-data-batcave-prod"
+  default = "cms-batcave-cost-data-batcave"
 }
 
 variable "object_key" {
