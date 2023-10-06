@@ -2,7 +2,7 @@
 variable "bucket_name" {
   type = string
   description = "The name of the s3 bucket"
-  default = "cms-batcave-cost-data-batcave-impl"
+  default = "cms-batcave-cost-data-batcave-prod"
 }
 
 variable "object_key" {
@@ -14,7 +14,7 @@ variable "object_key" {
 variable "role_permissions_boundary_arn" {
   description = "Permissions boundary ARN to use for IAM role"
   type        = string
-  default     = "arn:aws:iam::111594127594:policy/cms-cloud-admin/developer-boundary-policy"
+  default     = "arn:aws:iam::863306670509:policy/cms-cloud-admin/developer-boundary-policy"
 }
 
 variable "iam_path" {}
