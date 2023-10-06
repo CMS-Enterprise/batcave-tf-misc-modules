@@ -14,7 +14,7 @@ variable "object_key" {
 variable "role_permissions_boundary_arn" {
   description = "Permissions boundary ARN to use for IAM role"
   type        = string
-  default     = "arn:aws:iam::831579051573:policy/cms-cloud-admin/developer-boundary-policy"
+  default     = "arn:aws:iam::111594127594:policy/cms-cloud-admin/developer-boundary-policy"
 }
 
 variable "iam_path" {}
