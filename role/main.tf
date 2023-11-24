@@ -22,7 +22,7 @@ resource "aws_iam_role" "api-service-role" {
           "Condition": {
             "StringEquals": {
               "oidc.eks.us-east-1.amazonaws.com/id/${var.OIDCProviderID}:aud": "sts.amazonaws.com",
-              "oidc.eks.us-east-1.amazonaws.com/id/${var.OIDCProviderID}:sub": "system:serviceaccount:${var.GroupName}:${var.GroupName}-api-service-account"
+              "oidc.eks.us-east-1.amazonaws.com/id/${var.OIDCProviderID}:sub": "system:serviceaccount:${var.NameSpace}:${var.GroupName}-api-service-account"
               }
           }
       }]
@@ -51,7 +51,7 @@ resource "aws_iam_role" "job-scheduler-service-role" {
         "Condition": {
             "StringEquals": {
             "oidc.eks.us-east-1.amazonaws.com/id/${var.OIDCProviderID}:aud": "sts.amazonaws.com",
-            "oidc.eks.us-east-1.amazonaws.com/id/${var.OIDCProviderID}:sub": "system:serviceaccount:${var.GroupName}:${var.GroupName}-job-scheduler-service-account"
+            "oidc.eks.us-east-1.amazonaws.com/id/${var.OIDCProviderID}:sub": "system:serviceaccount:${var.NameSpace}:${var.GroupName}-job-scheduler-service-account"
             }
         }
     }]
