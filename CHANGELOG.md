@@ -6,3 +6,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.7.2]
 * Update role module with optional namespace variable
+## [2.7.3]
+* Fix syntax error with namespace variable
