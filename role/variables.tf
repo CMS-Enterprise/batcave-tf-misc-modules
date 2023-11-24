@@ -43,7 +43,7 @@ variable "GroupName" {
 variable "NameSpace" {
   description = "Optional for when the GroupName doesn't match the namespace"
   type        = string
-  default     = var.GroupName
+  default     = null
 }
 
 variable "iam_role_path" {
