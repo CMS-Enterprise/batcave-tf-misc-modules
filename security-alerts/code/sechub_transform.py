@@ -1,7 +1,7 @@
 import os
 
 def handler(event, context):
-    
+
     account_name = os.environ.get("ACCOUNT_NAME")
     try:
         event['detail']['findings'][0]['AwsAccountId'] = account_name

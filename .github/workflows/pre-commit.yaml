@@ -1,0 +1,47 @@
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  pre_commit:
+    name: Run pre-commit and commit any autocorrections
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.6.6
+    - name: Setup Terragrunt
+      uses: autero1/action-terragrunt@v1.1.0
+      with:
+        terragrunt_version: 0.54.8
+        # To avoid rate-limiting
+        token: ${{ secrets.GITHUB_TOKEN }}
+    - uses: terraform-linters/setup-tflint@v3
+      name: TFLint - Setup
+      with:
+        tflint_version: latest
+
+    - name: TFLint - Init
+      run: tflint --init
+      env:
+        # https://github.com/terraform-linters/tflint/blob/master/docs/user-guide/plugins.md#avoiding-rate-limiting
+        GITHUB_TOKEN: ${{ github.token }}
+    - name: TFLint - Show version
+      run: tflint --version
+    - uses: actions/setup-python@v4
+      with:
+        python-version: 3.x
+    - name: Terraform Docs - Install
+      run: |
+        curl -sSLo ./terraform-docs.tar.gz https://terraform-docs.io/dl/v0.17.0/terraform-docs-v0.17.0-$(uname)-amd64.tar.gz
+        tar -xzf terraform-docs.tar.gz -- terraform-docs
+        chmod +x terraform-docs
+        echo $PATH
+        mv terraform-docs /usr/local/bin/terraform-docs
+        terraform-docs --version
+    - uses: pre-commit/action@v3.0.0
+    - uses: pre-commit-ci/lite-action@v1.0.1
+      if: always()

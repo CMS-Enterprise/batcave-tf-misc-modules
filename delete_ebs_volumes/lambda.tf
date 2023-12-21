@@ -5,9 +5,9 @@ resource "null_resource" "lambda_package" {
   }
   triggers = {
     # re-build when requirements change
-    deps      = filemd5("${path.module}/python/requirements.txt")
+    deps = filemd5("${path.module}/python/requirements.txt")
     # re-build when source code changes
-    source    = jsonencode({for f in fileset("${path.module}/python/", "*.py") : f => filemd5("${path.module}/python/${f}")})
+    source = jsonencode({ for f in fileset("${path.module}/python/", "*.py") : f => filemd5("${path.module}/python/${f}") })
     # re-build if the build output is missing locally or inconsistent with the latest deployed build
     build_log = fileexists("${path.module}/python/build.log") ? filemd5("${path.module}/python/build.log") : timestamp()
   }
@@ -34,7 +34,7 @@ resource "aws_lambda_function" "delete_ebs_volumes" {
       LOG_LEVEL = "INFO"
     }
   }
-  tags             = {
+  tags = {
     environment = var.environment
     project     = var.project
   }
@@ -77,7 +77,7 @@ resource "aws_iam_role" "delete_ebs_volumes_lambda_role" {
   path                 = var.iam_path
   permissions_boundary = var.permissions_boundary
   managed_policy_arns  = [aws_iam_policy.delete_ebs_volumes_lambda_policy.arn]
-  assume_role_policy   = jsonencode(
+  assume_role_policy = jsonencode(
     {
       "Version" : "2012-10-17",
       "Statement" : [
@@ -98,7 +98,7 @@ resource "aws_iam_policy" "delete_ebs_volumes_lambda_policy" {
   name        = "delete_ebs_volumes_lambda_policy"
   path        = var.iam_path
   description = "Policy to be used by lambda which deletes available EBS volumes"
-  policy      = jsonencode(
+  policy = jsonencode(
     {
       "Version" : "2012-10-17",
       "Statement" : [

@@ -4,13 +4,13 @@ data "aws_caller_identity" "current" {}
 resource "aws_iam_role" "api-service-role" {
   name = "${var.GroupName}-api-service-role"
   depends_on = [
-      aws_iam_policy.api-policy
-    ]
-  path = var.iam_role_path
+    aws_iam_policy.api-policy
+  ]
+  path                 = var.iam_role_path
   permissions_boundary = var.permissions_boundary
-  tags = var.tags
-  assume_role_policy = <<-EOF
-  { 
+  tags                 = var.tags
+  assume_role_policy   = <<-EOF
+  {
     "Version": "2012-10-17",
     "Statement": [
       {
@@ -33,13 +33,13 @@ resource "aws_iam_role" "api-service-role" {
 resource "aws_iam_role" "job-scheduler-service-role" {
   name = "${var.GroupName}-job-scheduler-service-role"
   depends_on = [
-      aws_iam_policy.job-scheduler-policy
-    ]
-  path = var.iam_role_path
+    aws_iam_policy.job-scheduler-policy
+  ]
+  path                 = var.iam_role_path
   permissions_boundary = var.permissions_boundary
-  tags = var.tags
-  assume_role_policy = <<-EOF
-  { 
+  tags                 = var.tags
+  assume_role_policy   = <<-EOF
+  {
     "Version": "2012-10-17",
     "Statement": [
     {
@@ -62,15 +62,15 @@ resource "aws_iam_role" "job-scheduler-service-role" {
 resource "aws_iam_role" "cms-cloud-s3-snowflake-role" {
   name = "cms-cloud-${var.GroupName}-s3-snowflake-role"
   depends_on = [
-      aws_iam_policy.snowflake-access-policy
-    ]
-  path = var.iam_role_path
+    aws_iam_policy.snowflake-access-policy
+  ]
+  path                 = var.iam_role_path
   permissions_boundary = var.permissions_boundary
-  tags = var.tags
-  assume_role_policy = <<-EOF
+  tags                 = var.tags
+  assume_role_policy   = <<-EOF
   {
     "Version": "2012-10-17",
-    "Statement": 
+    "Statement":
     [
       {
         "Effect": "Allow",
@@ -84,17 +84,17 @@ resource "aws_iam_role" "cms-cloud-s3-snowflake-role" {
           "StringEquals": {
             "sts:ExternalId": "${var.SDLExternalId}"
             }
-          }  
+          }
       }
     ]
-  }                  
+  }
   EOF
 }
 
 resource "aws_iam_policy" "api-policy" {
-  name        = "${var.GroupName}-api-policy"
-  path        = "/delegatedadmin/developer/"
-  tags        = var.tags
+  name = "${var.GroupName}-api-policy"
+  path = "/delegatedadmin/developer/"
+  tags = var.tags
 
   policy = <<-EOF
   {
@@ -122,13 +122,13 @@ resource "aws_iam_policy" "api-policy" {
 }
 
 locals {
-  ApiResources = "[\"${join("\",\"",var.ApiResources)}\"]"
+  ApiResources = "[\"${join("\",\"", var.ApiResources)}\"]"
 }
 
 resource "aws_iam_policy" "job-scheduler-policy" {
-  name        = "${var.GroupName}-job-scheduler-policy"
-  path        = "/delegatedadmin/developer/"
-  tags        = var.tags
+  name = "${var.GroupName}-job-scheduler-policy"
+  path = "/delegatedadmin/developer/"
+  tags = var.tags
 
   policy = <<-EOF
   {
@@ -150,9 +150,9 @@ resource "aws_iam_policy" "job-scheduler-policy" {
 }
 
 resource "aws_iam_policy" "snowflake-access-policy" {
-  name        = "${var.GroupName}-snowflake-access-policy"
-  path        = "/delegatedadmin/developer/"
-  tags        = var.tags
+  name = "${var.GroupName}-snowflake-access-policy"
+  path = "/delegatedadmin/developer/"
+  tags = var.tags
 
   policy = <<-EOF
   {
