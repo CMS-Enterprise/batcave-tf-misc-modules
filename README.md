@@ -1,3 +1,5 @@
-# batCAVE Misc Modules
+# batcave-tf-misc-modules
 
-Miscellaneous modules for use in one-off circumstances on batCAVE.
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
