@@ -2,7 +2,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
@@ -10,10 +10,22 @@ repos:
         args: ["--allow-multiple-documents"]
     -   id: check-added-large-files
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.77.0 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
+    rev: v1.85.0 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
     hooks:
       - id: terraform_fmt     #  args: ["--enable require-variable-braces,deprecate-which"]
       - id: terraform_tflint
-        exclude: .*
+        args:
+          - "--args=--fix"
       - id: terragrunt_fmt
       - id: terraform_docs
+ci:
+    autofix_commit_msg: |
+        [pre-commit.ci] auto fixes from pre-commit.com hooks
+
+        for more information, see https://pre-commit.ci
+    autofix_prs: true
+    autoupdate_branch: ''
+    autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
+    autoupdate_schedule: weekly
+    skip: [terraform_fmt, terraform_tflint, terragrunt_fmt, terraform_docs]
+    submodules: false
