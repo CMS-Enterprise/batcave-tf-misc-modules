@@ -42,9 +42,9 @@ resource "aws_cloudwatch_event_target" "target" {
             "awsRegion":<region>,
             "eventTime":<time>,
             "eventName":"PutObject",
-            "s3":{  
+            "s3":{
                 "s3SchemaVersion":"1.0",
-                "bucket":{  
+                "bucket":{
                     "name":"${data.aws_s3_bucket.cms_logging_bucket.id}",
                     "arn":"${data.aws_s3_bucket.cms_logging_bucket.arn}"
                 },

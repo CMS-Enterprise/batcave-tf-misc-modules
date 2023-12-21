@@ -95,7 +95,7 @@ resource "aws_iam_role" "sfn_sechub_role" {
             "aws:SourceArn" : "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:*"
           },
           StringEquals : {
-            "aws:SourceAccount" : "${data.aws_caller_identity.current.account_id}"
+            "aws:SourceAccount" : data.aws_caller_identity.current.account_id
           }
         }
       }
@@ -177,7 +177,7 @@ resource "aws_iam_role" "sfn_target_role" {
         Action : "sts:AssumeRole",
         Condition : {
           StringEquals : {
-            "aws:SourceAccount" : "${data.aws_caller_identity.current.account_id}"
+            "aws:SourceAccount" : data.aws_caller_identity.current.account_id
           }
         }
       }

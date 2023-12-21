@@ -3,10 +3,10 @@ resource "aws_kinesis_firehose_delivery_stream" "panther_firehose" {
   destination = "extended_s3"
 
   extended_s3_configuration {
-    bucket_arn      = data.aws_s3_bucket.firehose_bucket.arn
+    bucket_arn         = data.aws_s3_bucket.firehose_bucket.arn
     buffering_size     = var.buffering_size
     buffering_interval = var.buffering_interval_in_seconds
-    role_arn        = aws_iam_role.firehose_s3_role.arn
+    role_arn           = aws_iam_role.firehose_s3_role.arn
 
     prefix              = "cloudwatchlogs/"
     error_output_prefix = "cloudwatchlogs/error/"
