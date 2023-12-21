@@ -17,7 +17,8 @@ repos:
         args:
           - "--args=--fix"
       - id: terragrunt_fmt
-      - id: terraform_docs
+      ## Disable terraform_docs for misc-modules
+      #- id: terraform_docs
 ci:
     autofix_commit_msg: |
         [pre-commit.ci] auto fixes from pre-commit.com hooks
