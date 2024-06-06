@@ -26,7 +26,7 @@ resource "aws_iam_role" "lambda_role" {
 # Policies
 resource "aws_iam_policy" "secrets_manager_policy" {
   name        = "${var.GroupName}-secrets-manager-policy"
-  path        = "/"
+  path        = var.iam_role_path
   tags        = var.tags
 
   policy = <<-EOF
