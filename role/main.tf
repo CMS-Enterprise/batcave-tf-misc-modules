@@ -1,6 +1,87 @@
+
 data "aws_caller_identity" "current" {}
 
 # ROLES
+resource "aws_iam_role" "lambda_role" {
+  name = "${var.GroupName}-lambda-role"
+  path = var.iam_role_path
+  permissions_boundary = var.permissions_boundary
+  tags = var.tags
+  assume_role_policy = <<-EOF
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "lambda.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  }
+  EOF
+}
+
+# Policies
+resource "aws_iam_policy" "secrets_manager_policy" {
+  name        = "${var.GroupName}-secrets-manager-policy"
+  path        = "/"
+  tags        = var.tags
+
+  policy = <<-EOF
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Action": [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:ListSecrets",
+          "secretsmanager:PutSecretValue"
+        ],
+        "Resource": "*"
+      }
+    ]
+  }
+  EOF
+}
+
+resource "aws_iam_policy" "cloudwatch_logs_policy" {
+  name        = "${var.GroupName}-cloudwatch-logs-policy"
+  path        = "/"
+  tags        = var.tags
+
+  policy = <<-EOF
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Action": [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        "Resource": "*"
+      }
+    ]
+  }
+  EOF
+}
+
+# Attach policies to Lambda role
+resource "aws_iam_role_policy_attachment" "secrets_manager_attachment" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = aws_iam_policy.secrets_manager_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "cloudwatch_logs_attachment" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = aws_iam_policy.cloudwatch_logs_policy.arn
+}
+
+# Existing roles and policies
 resource "aws_iam_role" "api-service-role" {
   name = "${var.GroupName}-api-service-role"
   depends_on = [
@@ -89,75 +170,6 @@ resource "aws_iam_role" "cms-cloud-s3-snowflake-role" {
     ]
   }                  
   EOF
-  
-resource "aws_iam_role" "lambda_role" {
-  name = "${var.GroupName}-lambda-role"
-  path = var.iam_role_path
-  permissions_boundary = var.permissions_boundary
-  tags = var.tags
-  assume_role_policy = <<-EOF
-  {
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Effect": "Allow",
-        "Principal": {
-          "Service": "lambda.amazonaws.com"
-        },
-        "Action": "sts:AssumeRole"
-      }
-    ]
-  }
-  EOF
-}
-
-# Policies
-resource "aws_iam_policy" "secrets_manager_policy" {
-  name        = "${var.GroupName}-secrets-manager-policy"
-  path        = "/"
-  tags        = var.tags
-
-  policy = <<-EOF
-  {
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Effect": "Allow",
-        "Action": [
-          "secretsmanager:GetSecretValue",
-          "secretsmanager:ListSecrets",
-          "secretsmanager:PutSecretValue"
-        ],
-        "Resource": "*"
-      }
-    ]
-  }
-  EOF
-}
-
-resource "aws_iam_policy" "cloudwatch_logs_policy" {
-  name        = "${var.GroupName}-cloudwatch-logs-policy"
-  path        = "/"
-  tags        = var.tags
-
-  policy = <<-EOF
-  {
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Effect": "Allow",
-        "Action": [
-          "logs:CreateLogGroup",
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
-        ],
-        "Resource": "*"
-      }
-    ]
-  }
-  EOF
-}
-
 }
 
 resource "aws_iam_policy" "api-policy" {
@@ -259,13 +271,4 @@ resource "aws_iam_role_policy_attachment" "api_policy" {
 resource "aws_iam_role_policy_attachment" "job_scheduler_policy" {
   role       = aws_iam_role.job-scheduler-service-role.name
   policy_arn = aws_iam_policy.job-scheduler-policy.arn
-}
-resource "aws_iam_role_policy_attachment" "secrets_manager_attachment" {
-  role       = aws_iam_role.lambda_role.name
-  policy_arn = aws_iam_policy.secrets_manager_policy.arn
-}
-
-resource "aws_iam_role_policy_attachment" "cloudwatch_logs_attachment" {
-  role       = aws_iam_role.lambda_role.name
-  policy_arn = aws_iam_policy.cloudwatch_logs_policy.arn
 }
