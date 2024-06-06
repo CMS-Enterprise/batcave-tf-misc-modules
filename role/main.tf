@@ -111,66 +111,66 @@ resource "aws_iam_role" "api-service-role" {
       EOF
 }
 
-resource "aws_iam_role" "job-scheduler-service-role" {
-  name = "${var.GroupName}-job-scheduler-service-role"
-  depends_on = [
-      aws_iam_policy.job-scheduler-policy
-    ]
-  path = var.iam_role_path
-  permissions_boundary = var.permissions_boundary
-  tags = var.tags
-  assume_role_policy = <<-EOF
-  { 
-    "Version": "2012-10-17",
-    "Statement": [
-    {
-        "Action": "sts:AssumeRoleWithWebIdentity",
-        "Effect": "Allow",
-        "Principal" : {
-            "Federated": "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/${var.OIDCProviderID}"
-        },
-        "Condition": {
-            "StringEquals": {
-            "oidc.eks.us-east-1.amazonaws.com/id/${var.OIDCProviderID}:aud": "sts.amazonaws.com",
-            "oidc.eks.us-east-1.amazonaws.com/id/${var.OIDCProviderID}:sub": "system:serviceaccount:${var.NameSpace != null ? var.NameSpace : var.GroupName}:${var.GroupName}-job-scheduler-service-account"
-            }
-        }
-    }]
-  }
-    EOF
-}
+// resource "aws_iam_role" "job-scheduler-service-role" {
+//   name = "${var.GroupName}-job-scheduler-service-role"
+//   depends_on = [
+//       aws_iam_policy.job-scheduler-policy
+//     ]
+//   path = var.iam_role_path
+//   permissions_boundary = var.permissions_boundary
+//   tags = var.tags
+//   assume_role_policy = <<-EOF
+//   { 
+//     "Version": "2012-10-17",
+//     "Statement": [
+//     {
+//         "Action": "sts:AssumeRoleWithWebIdentity",
+//         "Effect": "Allow",
+//         "Principal" : {
+//             "Federated": "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/${var.OIDCProviderID}"
+//         },
+//         "Condition": {
+//             "StringEquals": {
+//             "oidc.eks.us-east-1.amazonaws.com/id/${var.OIDCProviderID}:aud": "sts.amazonaws.com",
+//             "oidc.eks.us-east-1.amazonaws.com/id/${var.OIDCProviderID}:sub": "system:serviceaccount:${var.NameSpace != null ? var.NameSpace : var.GroupName}:${var.GroupName}-job-scheduler-service-account"
+//             }
+//         }
+//     }]
+//   }
+//     EOF
+// }
 
-resource "aws_iam_role" "cms-cloud-s3-snowflake-role" {
-  name = "cms-cloud-${var.GroupName}-s3-snowflake-role"
-  depends_on = [
-      aws_iam_policy.snowflake-access-policy
-    ]
-  path = var.iam_role_path
-  permissions_boundary = var.permissions_boundary
-  tags = var.tags
-  assume_role_policy = <<-EOF
-  {
-    "Version": "2012-10-17",
-    "Statement": 
-    [
-      {
-        "Effect": "Allow",
-        "Principal": {
-          "AWS": "${var.SDLUserArn}"
-          },
-        "Action": [
-          "sts:AssumeRole"
-          ],
-        "Condition": {
-          "StringEquals": {
-            "sts:ExternalId": "${var.SDLExternalId}"
-            }
-          }  
-      }
-    ]
-  }                  
-  EOF
-}
+// resource "aws_iam_role" "cms-cloud-s3-snowflake-role" {
+//   name = "cms-cloud-${var.GroupName}-s3-snowflake-role"
+//   depends_on = [
+//       aws_iam_policy.snowflake-access-policy
+//     ]
+//   path = var.iam_role_path
+//   permissions_boundary = var.permissions_boundary
+//   tags = var.tags
+//   assume_role_policy = <<-EOF
+//   {
+//     "Version": "2012-10-17",
+//     "Statement": 
+//     [
+//       {
+//         "Effect": "Allow",
+//         "Principal": {
+//           "AWS": "${var.SDLUserArn}"
+//           },
+//         "Action": [
+//           "sts:AssumeRole"
+//           ],
+//         "Condition": {
+//           "StringEquals": {
+//             "sts:ExternalId": "${var.SDLExternalId}"
+//             }
+//           }  
+//       }
+//     ]
+//   }                  
+//   EOF
+// }
 
 resource "aws_iam_policy" "api-policy" {
   name        = "${var.GroupName}-api-policy"
