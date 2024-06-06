@@ -49,7 +49,7 @@ resource "aws_iam_policy" "secrets_manager_policy" {
 
 resource "aws_iam_policy" "cloudwatch_logs_policy" {
   name        = "${var.GroupName}-cloudwatch-logs-policy"
-  path        = "/"
+  path        = var.iam_role_path
   tags        = var.tags
 
   policy = <<-EOF
