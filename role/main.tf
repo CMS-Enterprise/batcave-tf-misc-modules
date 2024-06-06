@@ -202,61 +202,61 @@ resource "aws_iam_policy" "api-policy" {
   EOF
 }
 
-locals {
-  ApiResources = "[\"${join("\",\"",var.ApiResources)}\"]"
-}
+// locals {
+//   ApiResources = "[\"${join("\",\"",var.ApiResources)}\"]"
+// }
 
-resource "aws_iam_policy" "job-scheduler-policy" {
-  name        = "${var.GroupName}-job-scheduler-policy"
-  path        = "/delegatedadmin/developer/"
-  tags        = var.tags
+// resource "aws_iam_policy" "job-scheduler-policy" {
+//   name        = "${var.GroupName}-job-scheduler-policy"
+//   path        = "/delegatedadmin/developer/"
+//   tags        = var.tags
 
-  policy = <<-EOF
-  {
-    "Version": "2012-10-17",
-    "Statement":
-    [
-      {
-      "Effect": "Allow",
-        "Action": [
-          "sqs:SendMessage",
-          "sqs:GetQueueUrl"
-          ],
-        "Resource":
-          ["${var.SQSStackName}"]
-      }
-    ]
-  }
-  EOF
-}
+//   policy = <<-EOF
+//   {
+//     "Version": "2012-10-17",
+//     "Statement":
+//     [
+//       {
+//       "Effect": "Allow",
+//         "Action": [
+//           "sqs:SendMessage",
+//           "sqs:GetQueueUrl"
+//           ],
+//         "Resource":
+//           ["${var.SQSStackName}"]
+//       }
+//     ]
+//   }
+//   EOF
+// }
 
-resource "aws_iam_policy" "snowflake-access-policy" {
-  name        = "${var.GroupName}-snowflake-access-policy"
-  path        = "/delegatedadmin/developer/"
-  tags        = var.tags
+// resource "aws_iam_policy" "snowflake-access-policy" {
+//   name        = "${var.GroupName}-snowflake-access-policy"
+//   path        = "/delegatedadmin/developer/"
+//   tags        = var.tags
 
-  policy = <<-EOF
-  {
-    "Version": "2012-10-17",
-    "Statement":
-    [
-      {
-        "Effect": "Allow",
-          "Action": [
-            "s3:GetBucketLocation",
-            "s3:GetObject",
-            "s3:GetObjectVersion",
-            "s3:ListBucket",
-            "s3:PutObject",
-            "s3:DeleteObject"
-            ],
-          "Resource":
-            ["${var.S3StackName}"]
-      }
-    ]
-  }
-  EOF
-}
+//   policy = <<-EOF
+//   {
+//     "Version": "2012-10-17",
+//     "Statement":
+//     [
+//       {
+//         "Effect": "Allow",
+//           "Action": [
+//             "s3:GetBucketLocation",
+//             "s3:GetObject",
+//             "s3:GetObjectVersion",
+//             "s3:ListBucket",
+//             "s3:PutObject",
+//             "s3:DeleteObject"
+//             ],
+//           "Resource":
+//             ["${var.S3StackName}"]
+//       }
+//     ]
+//   }
+//   EOF
+// }
 
 resource "aws_iam_role_policy_attachment" "snowflake_policy" {
   role       = aws_iam_role.cms-cloud-s3-snowflake-role.name
