@@ -10,7 +10,7 @@ resource "aws_iam_role" "api-service-role" {
   permissions_boundary = var.permissions_boundary
   tags = var.tags
   assume_role_policy = <<-EOF
-  { 
+  {
     "Version": "2012-10-17",
     "Statement": [
       {
@@ -39,7 +39,7 @@ resource "aws_iam_role" "job-scheduler-service-role" {
   permissions_boundary = var.permissions_boundary
   tags = var.tags
   assume_role_policy = <<-EOF
-  { 
+  {
     "Version": "2012-10-17",
     "Statement": [
     {
@@ -70,7 +70,7 @@ resource "aws_iam_role" "cms-cloud-s3-snowflake-role" {
   assume_role_policy = <<-EOF
   {
     "Version": "2012-10-17",
-    "Statement": 
+    "Statement":
     [
       {
         "Effect": "Allow",
@@ -84,10 +84,10 @@ resource "aws_iam_role" "cms-cloud-s3-snowflake-role" {
           "StringEquals": {
             "sts:ExternalId": "${var.SDLExternalId}"
             }
-          }  
+          }
       }
     ]
-  }                  
+  }
   EOF
 }
 

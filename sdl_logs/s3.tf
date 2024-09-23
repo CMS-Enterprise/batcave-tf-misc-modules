@@ -3,7 +3,7 @@ data "aws_s3_bucket" "cms_logging_bucket" {
 }
 
 
-# Bucket notifications are managed as a single resource by AWS. 
+# Bucket notifications are managed as a single resource by AWS.
 # If an organizational change is made from cms cloud, our notifications will be overwritten, and if we
 # make a change, we overwrite their settings, so this became a last resort
 # This local-exec requires aws cli on the local machine
